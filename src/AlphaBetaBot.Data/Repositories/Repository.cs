@@ -48,7 +48,7 @@ namespace AlphaBetaBot.Data
             }
         }
 
-        public virtual async Task<TEntity> GetAsync(string id)
+        public virtual async Task<TEntity> GetAsync(int id)
         {
             try
             {

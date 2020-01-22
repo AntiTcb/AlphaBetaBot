@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 
@@ -28,10 +29,21 @@ namespace AlphaBetaBot.Data
 
             _repositories = repos.AsReadOnly();
         }
-
-        internal void InvokeEvent(DatabaseActionEventArgs e)
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            DatabaseUpdated?.Invoke(e);
+            if (!optionsBuilder.IsConfigured)
+            {
+                optionsBuilder.UseNpgsql(_connectionStringProvider.ConnectionString);
+            }
         }
+
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+
+        }
+
+        public T RequestRepository<T>() => _repositories.OfType<T>().FirstOrDefault();
+
+        internal void InvokeEvent(DatabaseActionEventArgs e) => DatabaseUpdated?.Invoke(e);
     }
 }

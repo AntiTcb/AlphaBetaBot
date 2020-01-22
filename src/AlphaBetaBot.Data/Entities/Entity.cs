@@ -18,7 +18,6 @@ namespace AlphaBetaBot.Data
 
     public abstract class DiscordEntity : Entity
     {
-
         [Column("snowflake_id")]
         public string SnowflakeId { get; set; }
     }

@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
-namespace AlphaBetaBot.Data.Repositories
+namespace AlphaBetaBot.Data
 {
     public class RaidRepository : Repository<WowRaid>
     {

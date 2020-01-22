@@ -6,9 +6,9 @@ namespace AlphaBetaBot.Data
     {
         public string ConnectionString { get; }
 
-        public ConnectionStringProvider(AbfDbConfigurationProvider databaseConfiguration)
+        public ConnectionStringProvider(IDatabaseConfigurationProvider databaseConfiguration)
         {
-            var config = databaseConfiguration.Configuration;
+            var config = databaseConfiguration.GetConfiguration();
 
             ConnectionString = new NpgsqlConnectionStringBuilder
             {

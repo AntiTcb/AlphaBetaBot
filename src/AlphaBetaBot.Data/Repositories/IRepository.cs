@@ -7,7 +7,7 @@ namespace AlphaBetaBot.Data
     {
         Task<IReadOnlyList<TEntity>> GetAllAsync();
 
-        Task<TEntity> GetAsync(string id);
+        Task<TEntity> GetAsync(int id);
 
         Task<TEntity> AddAsync(TEntity entity);
 
@@ -19,6 +19,6 @@ namespace AlphaBetaBot.Data
     }
     public interface IGetOrAddRepository<T> : IRepository<T> where T : Entity
     {
-        Task<T> GetOrAddAsync(string id);
+        Task<T> GetOrAddAsync(int id);
     }
 }
