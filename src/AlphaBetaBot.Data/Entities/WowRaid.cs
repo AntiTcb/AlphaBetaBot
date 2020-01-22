@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace AlphaBetaBot.Data
@@ -8,19 +10,29 @@ namespace AlphaBetaBot.Data
     {
         public DateTimeOffset RaidTime { get; set; }
 
-        public Raid Raid { get; set; }
+        public RaidLocationId RaidLocationId { get; set; }
+        public RaidLocation Raid { get; set; }
 
-        public WowCharacter[] Raiders { get; set; } = new WowCharacter[39];
+        public List<WowCharacter> Raiders { get; set; } = new List<WowCharacter>();
     }
 
-    public enum Raid
+    [Table("raid_locations")]
+    public class RaidLocation
     {
-        Onyxia,
-        MoltenCore,
-        BlackwingLair,
-        ZulGurub,
-        AQ20,
-        AQ40,
-        Naxxramas
+        [Key]
+        public RaidLocationId RaidLocationId { get; set; }
+        public string Name { get; set; }
+
+    }
+
+    public enum RaidLocationId : int
+    {
+        Onyxia = 0,
+        MoltenCore = 1,
+        BlackwingLair = 2,
+        ZulGurub = 3,
+        AQ20 = 4,
+        AQ40 = 5,
+        Naxxramas = 6
     }
 }

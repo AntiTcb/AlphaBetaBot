@@ -39,7 +39,22 @@ namespace AlphaBetaBot.Data
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
+            builder.Entity<WowRaid>()
+                .Property(r => r.RaidLocationId)
+                .HasConversion<int>();
 
+            builder.Entity<RaidLocation>()
+                .Property(r => r.RaidLocationId)
+                .HasConversion<int>();
+
+            builder.Entity<RaidLocation>()
+                .HasData(Enum.GetValues(typeof(RaidLocationId))
+                    .Cast<RaidLocationId>()
+                    .Select(e => new RaidLocation
+                    {
+                        Name = e.ToString(),
+                        RaidLocationId = e
+                    }));
         }
 
         public T RequestRepository<T>() => _repositories.OfType<T>().FirstOrDefault();
