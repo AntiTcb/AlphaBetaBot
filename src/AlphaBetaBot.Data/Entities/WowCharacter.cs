@@ -5,10 +5,10 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace AlphaBetaBot.Data
 {
     [Table("characters")]
-    public class WowCharacter : Entity
+    public class WowCharacter 
     {
+        public int Id { get; set; }
         public User Owner { get; set; }
-
         [Required]
         public string CharacterName { get; set; }
         [Required]

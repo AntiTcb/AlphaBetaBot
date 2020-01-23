@@ -16,7 +16,7 @@ namespace AlphaBetaBot
             [Command("list")]
             public async Task ListCharactersAsync()
             {
-                var characters = DbContext.User.Characters.ToArray();
+                var characters = DbContext.User.Characters;
 
                 var embed = new LocalEmbedBuilder()
                     .WithTitle($"{Context.User.Name}'s characters:");
@@ -39,8 +39,8 @@ namespace AlphaBetaBot
             [Command("add")]
             public async Task AddCharacterAsync(string characterName, WowClass @class, ClassRole role)
             {
-                var repo = DbContext.Database.RequestRepository<WowCharacterRepository>();
-                var character = await repo.AddAsync(new WowCharacter { CharacterName = characterName, Class = @class, Role = role, Owner = DbContext.User });
+                var character = new WowCharacter { CharacterName = characterName, Class = @class, Role = role, Owner = DbContext.User };
+                DbContext.User.Characters.Add(character);
                 await ReplyAsync($"Added character {character.CharacterName} | {character.Class} | {character.Role}");
             }
         }

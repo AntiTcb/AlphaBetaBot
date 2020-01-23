@@ -80,7 +80,9 @@ namespace AlphaBetaBot
                     }
                     break;
                 case ExecutionFailedResult _: //this should be handled in the CommandErrored event or in the Custom Result case.
-                case CommandNotFoundResult _: //this is handled at the beginning of this method with levenshtein thing.
+                    break;
+                case CommandNotFoundResult err: //this is handled at the beginning of this method with levenshtein thing.
+                    str.AppendLine($"Command Not Found: {err.Reason}");    
                     break;
                 case CommandOnCooldownResult err:
                     var remainingTime = err.Cooldowns.OrderByDescending(x => x.RetryAfter).FirstOrDefault();

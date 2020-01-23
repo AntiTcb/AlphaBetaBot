@@ -48,7 +48,7 @@ namespace AlphaBetaBot.Data
             }
         }
 
-        public virtual async Task<TEntity> GetAsync(int id)
+        public virtual async Task<TEntity> GetAsync(ulong id)
         {
             try
             {

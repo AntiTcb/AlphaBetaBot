@@ -8,7 +8,7 @@ namespace AlphaBetaBot
         private readonly AbfCommandContext _ctx;
 
         private readonly IGetOrAddRepository<User> _users;
-        private readonly IRepository<WowCharacter> _characters;
+        //private readonly IRepository<WowCharacter> _characters;
         private readonly IGetOrAddRepository<Raid> _raids;
 
         public bool IsReady { get; private set; }
@@ -21,14 +21,14 @@ namespace AlphaBetaBot
         {
             _ctx = ctx;
             _users = context.RequestRepository<IGetOrAddRepository<User>>();
-            _characters = context.RequestRepository<IRepository<WowCharacter>>();
+           // _characters = context.RequestRepository<IRepository<WowCharacter>>();
             _raids = context.RequestRepository<IGetOrAddRepository<Raid>>();
             Database = context;
         }
 
         public async Task PrepareAsync()
         {
-            User = await (_users as UserRepository).GetOrAddAsync(_ctx.User.Id.ToString());
+            User = await (_users as UserRepository).GetOrAddAsync(_ctx.User.Id);
 
             IsReady = true;
         }

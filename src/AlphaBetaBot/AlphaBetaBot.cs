@@ -34,6 +34,7 @@ namespace AlphaBetaBot
             {
                 AbfDbContext.DatabaseUpdated += HandleDatabaseUpdated;
                 await using var db = _services.GetRequiredService<AbfDbContext>();
+                _dbLogger.Info("Running DB migrations.");
                 db.Database.Migrate();
             }
             catch (Exception e)

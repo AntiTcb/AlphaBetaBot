@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace AlphaBetaBot.Data
 {
@@ -16,31 +16,14 @@ namespace AlphaBetaBot.Data
         public ICollection<RaidParticipant> Participants { get; set; }
     }
 
-    public class RaidParticipant
+    public class RaidConfiguration : EntityConfiguration<Raid>
     {
-        public int CharacterId { get; set; }
-        public WowCharacter Character { get; set; }
-        public int RaidId { get; set; }
-        public Raid Raid { get; set; }
-    }
+        public override void Configure(EntityTypeBuilder<Raid> builder)
+        {
+            base.Configure(builder);
 
-    [Table("raid_locations")]
-    public class RaidLocation
-    {
-        [Key]
-        public RaidLocationId RaidLocationId { get; set; }
-        public string Name { get; set; }
-
-    }
-
-    public enum RaidLocationId : int
-    {
-        Onyxia = 0,
-        MoltenCore = 1,
-        BlackwingLair = 2,
-        ZulGurub = 3,
-        AQ20 = 4,
-        AQ40 = 5,
-        Naxxramas = 6
+            builder.Property(r => r.RaidLocationId)
+                .HasConversion<int>();
+        }
     }
 }

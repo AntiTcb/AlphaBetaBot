@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 
@@ -8,15 +9,15 @@ namespace AlphaBetaBot.Data
     {
         internal UserRepository(DbSet<User> entities, AbfDbContext context) : base(entities, context, "User") { }
 
-        public async Task<User> GetAsync(string snowflakeId)
+        public override async Task<User> GetAsync(ulong snowflakeId)
         {
             _entities.Include(x => x.Characters);
 
-            var entity = await _entities.FirstOrDefaultAsync(u => u.SnowflakeId == snowflakeId);
+            var entity = await _entities.FirstOrDefaultAsync(u => u.Id == snowflakeId);
             return entity;
         }
 
-        public async Task<User> GetOrAddAsync(string snowflakeId)
+        public async Task<User> GetOrAddAsync(ulong snowflakeId)
         {
             _entities.Include(x => x.Characters);
 
@@ -25,14 +26,13 @@ namespace AlphaBetaBot.Data
             {
                 entity = await AddAsync(new User
                 {
-                    SnowflakeId = snowflakeId,
-                    Characters = new List<WowCharacter>()
+                    Id = snowflakeId,
+                    Characters = new List<WowCharacter>(),
+                    CreatedAt = DateTimeOffset.UtcNow
                 });
             }
 
             return entity;
         }
-
-        public Task<User> GetOrAddAsync(int id) => throw new System.NotImplementedException();
     }
 }

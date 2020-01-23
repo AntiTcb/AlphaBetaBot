@@ -9,9 +9,11 @@ namespace AlphaBetaBot
     public class LogService
     {
         private readonly ILogger _logger;
+        private readonly string _loggerName;
 
         public LogService(string name)
         {
+            _loggerName = name;
             _logger = new LoggerConfiguration()
                 .MinimumLevel.Debug()
                 .WriteTo.Console(restrictedToMinimumLevel: LogEventLevel.Information)
@@ -54,12 +56,12 @@ namespace AlphaBetaBot
 
         public void Log(MessageLoggedEventArgs eventArgs) => Log(eventArgs.Severity, eventArgs.ToString(), eventArgs.Exception);
 
-        public void Trace(string message) => _logger.Verbose(message);
-        public void Debug(string message) => _logger.Debug(message);
-        public void Info(string message) => _logger.Information(message);
-        public void Fatal(string message) => _logger.Fatal(message);
-        public void Error(string message, Exception e) => _logger.Error(e, message);
-        public void Error(string message) => _logger.Error(message);
-        public void Warning(string message) => _logger.Warning(message);
+        public void Trace(string message) => _logger.Verbose($"[{_loggerName}] {message}");
+        public void Debug(string message) => _logger.Debug($"[{_loggerName}] {message}");
+        public void Info(string message) => _logger.Information($"[{_loggerName}] {message}");
+        public void Fatal(string message) => _logger.Fatal($"[{_loggerName}] {message}");
+        public void Error(string message, Exception e) => _logger.Error(e, $"[{_loggerName}] {message}");
+        public void Error(string message) => _logger.Error($"[{_loggerName}] {message}");
+        public void Warning(string message) => _logger.Warning($"[{_loggerName}] {message}");
     }
 }
