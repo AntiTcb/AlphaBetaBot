@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace AlphaBetaBot.Data
@@ -10,10 +11,12 @@ namespace AlphaBetaBot.Data
 
         [Required]
         public string CharacterName { get; set; }
-
+        [Required]
         public WowClass Class { get; set; }
-
+        [Required]
         public ClassRole Role { get; set; }
+
+        public ICollection<RaidParticipant> RaidsAttending { get; set; }
     }
 
     public enum WowClass

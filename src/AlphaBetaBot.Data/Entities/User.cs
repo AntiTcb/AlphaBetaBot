@@ -6,6 +6,6 @@ namespace AlphaBetaBot.Data
     [Table("users")]
     public class User : DiscordEntity
     {
-        public List<WowCharacter> Characters { get; set; } = new List<WowCharacter>();
+        public ICollection<WowCharacter> Characters { get; set; } 
     }
 }

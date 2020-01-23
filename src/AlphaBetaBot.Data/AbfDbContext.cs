@@ -13,7 +13,7 @@ namespace AlphaBetaBot.Data
 
         public DbSet<User> Users { get; set; }
         public DbSet<WowCharacter> Characters { get; set; }
-        public DbSet<WowRaid> Raids { get; set; }
+        public DbSet<Raid> Raids { get; set; }
 
         public static Func<DatabaseActionEventArgs, Task> DatabaseUpdated;
 
@@ -39,7 +39,7 @@ namespace AlphaBetaBot.Data
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
-            builder.Entity<WowRaid>()
+            builder.Entity<Raid>()
                 .Property(r => r.RaidLocationId)
                 .HasConversion<int>();
 
@@ -55,6 +55,17 @@ namespace AlphaBetaBot.Data
                         Name = e.ToString(),
                         RaidLocationId = e
                     }));
+
+            builder.Entity<RaidParticipant>()
+                .HasKey(rp => new { rp.RaidId, rp.CharacterId });
+            builder.Entity<RaidParticipant>()
+                .HasOne(rp => rp.Character)
+                .WithMany(r => r.RaidsAttending)
+                .HasForeignKey(rp => rp.CharacterId);
+            builder.Entity<RaidParticipant>()
+                .HasOne(rp => rp.Raid)
+                .WithMany(r => r.Participants)
+                .HasForeignKey(rp => rp.RaidId);
         }
 
         public T RequestRepository<T>() => _repositories.OfType<T>().FirstOrDefault();

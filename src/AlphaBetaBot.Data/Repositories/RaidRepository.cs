@@ -2,8 +2,8 @@
 
 namespace AlphaBetaBot.Data
 {
-    public class RaidRepository : Repository<WowRaid>
+    public class RaidRepository : Repository<Raid>
     {
-        internal RaidRepository(DbSet<WowRaid> entities, AbfDbContext context) : base(entities, context, "Raid") { }
+        internal RaidRepository(DbSet<Raid> entities, AbfDbContext context) : base(entities, context, "Raid") { }
     }
 }

@@ -6,14 +6,22 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace AlphaBetaBot.Data
 {
     [Table("raids")]
-    public class WowRaid : Entity
+    public class Raid : Entity
     {
         public DateTimeOffset RaidTime { get; set; }
 
         public RaidLocationId RaidLocationId { get; set; }
-        public RaidLocation Raid { get; set; }
+        public RaidLocation RaidLocation { get; set; }
 
-        public List<WowCharacter> Raiders { get; set; } = new List<WowCharacter>();
+        public ICollection<RaidParticipant> Participants { get; set; }
+    }
+
+    public class RaidParticipant
+    {
+        public int CharacterId { get; set; }
+        public WowCharacter Character { get; set; }
+        public int RaidId { get; set; }
+        public Raid Raid { get; set; }
     }
 
     [Table("raid_locations")]

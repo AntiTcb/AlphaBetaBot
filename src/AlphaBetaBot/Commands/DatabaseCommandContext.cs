@@ -9,7 +9,7 @@ namespace AlphaBetaBot
 
         private readonly IGetOrAddRepository<User> _users;
         private readonly IRepository<WowCharacter> _characters;
-        private readonly IGetOrAddRepository<WowRaid> _raids;
+        private readonly IGetOrAddRepository<Raid> _raids;
 
         public bool IsReady { get; private set; }
 
@@ -22,7 +22,7 @@ namespace AlphaBetaBot
             _ctx = ctx;
             _users = context.RequestRepository<IGetOrAddRepository<User>>();
             _characters = context.RequestRepository<IRepository<WowCharacter>>();
-            _raids = context.RequestRepository<IGetOrAddRepository<WowRaid>>();
+            _raids = context.RequestRepository<IGetOrAddRepository<Raid>>();
             Database = context;
         }
 
