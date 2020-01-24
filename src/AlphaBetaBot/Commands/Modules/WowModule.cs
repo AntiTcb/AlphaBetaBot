@@ -10,10 +10,10 @@ namespace AlphaBetaBot
     [Name("Wow")]
     public class WowModule : AbfModuleBase
     {
-        [Name("Characters"), Group("character")]
+        [Name("Characters"), Group("character", "characters", "toons")]
         public class WowCharacterModule : AbfModuleBase
         {
-            [Command("list")]
+            [Command("list", "")]
             public async Task ListCharactersAsync()
             {
                 var characters = DbContext.User.Characters;
@@ -33,15 +33,35 @@ namespace AlphaBetaBot
                 {
                     sb.AppendLine($"{character.CharacterName} | {character.Class} | {character.Role}");
                 }
+                embed.WithDescription(sb.ToString());
                 await ReplyAsync(embed: embed.Build());
             }
 
             [Command("add")]
             public async Task AddCharacterAsync(string characterName, WowClass @class, ClassRole role)
             {
-                var character = new WowCharacter { CharacterName = characterName, Class = @class, Role = role, Owner = DbContext.User };
+                var character = new WowCharacter { 
+                    CharacterName = characterName, 
+                    Class = @class, 
+                    Role = role, 
+                    Owner = DbContext.User 
+                };
+
                 DbContext.User.Characters.Add(character);
                 await ReplyAsync($"Added character {character.CharacterName} | {character.Class} | {character.Role}");
+            }
+
+            [Command("remove", "delete")]
+            public async Task RemoveCharacterAsync(string characterName)
+            {
+                var character = DbContext.User.Characters.FirstOrDefault(c => c.CharacterName == characterName);
+                
+                if (character is null)
+                    await ReplyAsync("Character not found.");
+                else {
+                    DbContext.User.Characters.Remove(character);
+                    await ReplyAsync($"{characterName} was removed from your character list.");
+                }
             }
         }
     }

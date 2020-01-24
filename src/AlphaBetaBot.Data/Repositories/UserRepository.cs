@@ -11,16 +11,13 @@ namespace AlphaBetaBot.Data
 
         public override async Task<User> GetAsync(ulong snowflakeId)
         {
-            _entities.Include(x => x.Characters);
-
-            var entity = await _entities.FirstOrDefaultAsync(u => u.Id == snowflakeId);
+            await _entities.Include(x => x.Characters).ToListAsync();
+            var entity = await _entities.FindAsync(snowflakeId);
             return entity;
         }
 
         public async Task<User> GetOrAddAsync(ulong snowflakeId)
         {
-            _entities.Include(x => x.Characters);
-
             var entity = await GetAsync(snowflakeId);
             if (entity is null)
             {

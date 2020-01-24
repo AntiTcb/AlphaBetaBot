@@ -32,6 +32,7 @@ namespace AlphaBetaBot
             Ready += OnReadyAsync;
             CommandExecutionFailed += DiscordService_CommandExecutionFailed;
             Logger.MessageLogged += OnMessageLogged;
+            
 
             AddModules(assembly);
         }

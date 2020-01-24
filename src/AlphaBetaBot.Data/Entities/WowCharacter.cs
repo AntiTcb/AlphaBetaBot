@@ -9,14 +9,17 @@ namespace AlphaBetaBot.Data
     {
         public int Id { get; set; }
         public User Owner { get; set; }
+
         [Required]
         public string CharacterName { get; set; }
+
         [Required]
         public WowClass Class { get; set; }
+
         [Required]
         public ClassRole Role { get; set; }
 
-        public ICollection<RaidParticipant> RaidsAttending { get; set; }
+        public virtual ICollection<RaidParticipant> RaidsAttending { get; set; }
     }
 
     public enum WowClass
@@ -34,9 +37,9 @@ namespace AlphaBetaBot.Data
 
     public enum ClassRole
     {
-        CasterDps,
+        Caster,
         Healer,
-        MeleeDps,
+        Melee,
         Tank
     }
 }

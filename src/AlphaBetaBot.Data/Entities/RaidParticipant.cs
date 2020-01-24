@@ -6,7 +6,7 @@ namespace AlphaBetaBot.Data
     [Table("raid_participants")]
     public class RaidParticipant : Entity
     {
-        public ulong CharacterId { get; set; }
+        public int CharacterId { get; set; }
         public WowCharacter Character { get; set; }
         public ulong RaidId { get; set; }
         public Raid Raid { get; set; }

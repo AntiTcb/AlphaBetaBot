@@ -37,20 +37,23 @@ namespace AlphaBetaBot
             switch (severity)
             {
                 case LogMessageSeverity.Critical:
-                Fatal(message);
-                break;
+                    Fatal(message);
+                    break;
                 case LogMessageSeverity.Debug:
-                Debug(message);
-                break;
+                    Debug(message);
+                    break;
                 case LogMessageSeverity.Error:
-                if (e is null)
-                    Error(message);
-                else
-                    Error(message, e);
-                break;
+                    if (e is null)
+                        Error(message);
+                    else
+                        Error(message, e);
+                    break;
                 case LogMessageSeverity.Warning:
-                Warning(message);
-                break;
+                    Warning(message);
+                    break;
+                case LogMessageSeverity.Information:
+                    Info(message);
+                    break;
             };
         }
 

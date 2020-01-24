@@ -7,7 +7,9 @@ namespace AlphaBetaBot.Data
     [Table("users")]
     public class User : Entity
     {
-        public ICollection<WowCharacter> Characters { get; set; } = new List<WowCharacter>();
+        public User() => Characters = new List<WowCharacter>();
+
+        public virtual ICollection<WowCharacter> Characters { get; set; }
     }
 
     public class UserConfiguration : EntityConfiguration<User>
@@ -19,10 +21,8 @@ namespace AlphaBetaBot.Data
             builder.HasKey(u => u.Id);
             builder.Property(u => u.Id)
                 .ValueGeneratedNever();
-            builder.OwnsMany(u => u.Characters, c =>
-            {
-                c.WithOwner(c => c.Owner).HasForeignKey("UserId");
-            });
+            builder.HasMany(u => u.Characters)
+                .WithOne(c => c.Owner);
         }
     }
 }

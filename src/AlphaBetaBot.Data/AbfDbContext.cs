@@ -12,7 +12,7 @@ namespace AlphaBetaBot.Data
         private readonly ConnectionStringProvider _connectionStringProvider;
 
         public DbSet<User> Users { get; set; }
-        public DbSet<WowCharacter> Characters { get; set; }
+        //public DbSet<WowCharacter> Characters { get; set; }
         public DbSet<Raid> Raids { get; set; }
 
         public static Func<DatabaseActionEventArgs, Task> DatabaseUpdated;
