@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Linq;
+using System.Threading.Tasks;
 using AlphaBetaBot.Data;
 
 namespace AlphaBetaBot
@@ -10,10 +11,12 @@ namespace AlphaBetaBot
         private readonly IGetOrAddRepository<User> _users;
         //private readonly IRepository<WowCharacter> _characters;
         private readonly IGetOrAddRepository<Raid> _raids;
+        private readonly IGetOrAddRepository<Guild> _guilds;
 
         public bool IsReady { get; private set; }
 
         public User User { get; private set; }
+        public Guild Guild { get; private set; }
         
         public AbfDbContext Database { get; }
 
@@ -21,8 +24,11 @@ namespace AlphaBetaBot
         {
             _ctx = ctx;
             _users = context.RequestRepository<IGetOrAddRepository<User>>();
-           // _characters = context.RequestRepository<IRepository<WowCharacter>>();
             _raids = context.RequestRepository<IGetOrAddRepository<Raid>>();
+            
+            if (!(_ctx.Guild is null))
+                _guilds = context.RequestRepository<IGetOrAddRepository<Guild>>();
+
             Database = context;
         }
 
@@ -30,7 +36,21 @@ namespace AlphaBetaBot
         {
             User = await (_users as UserRepository).GetOrAddAsync(_ctx.User.Id);
 
+            if (!(_ctx.Guild is null))
+                Guild = await (_guilds as GuildRepository).GetOrAddAsync(_ctx.Guild.Id);
+
             IsReady = true;
+        }
+
+        public Task AddRaidAsync(Raid raid) => _raids.AddAsync(raid);
+
+        public async Task<Raid> GetRaidAsync(ulong raidSignupMessageId) 
+            => await _raids.GetAsync(raidSignupMessageId);
+
+        public async Task SignupToRaidAsync(RaidParticipant raidParticipant)
+        {
+            var raid = await _raids.GetAsync(raidParticipant.RaidId);
+
         }
 
         public Task UpdateUserAsync() => _users.UpdateAsync(User);

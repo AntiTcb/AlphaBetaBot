@@ -22,6 +22,9 @@ namespace AlphaBetaBot.Data
         {
             base.Configure(builder);
 
+            builder.HasKey(r => r.Id);
+            builder.Property(r => r.Id)
+                .ValueGeneratedNever();
             builder.Property(r => r.RaidLocationId)
                 .HasConversion<int>();
         }
