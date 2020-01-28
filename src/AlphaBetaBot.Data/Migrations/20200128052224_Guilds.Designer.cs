@@ -10,8 +10,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace AlphaBetaBot.Data.Migrations
 {
     [DbContext(typeof(AbfDbContext))]
-    [Migration("20200124215115_InitialMigration")]
-    partial class InitialMigration
+    [Migration("20200128052224_Guilds")]
+    partial class Guilds
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -21,16 +21,33 @@ namespace AlphaBetaBot.Data.Migrations
                 .HasAnnotation("ProductVersion", "3.1.0")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
-            modelBuilder.Entity("AlphaBetaBot.Data.Raid", b =>
+            modelBuilder.Entity("AlphaBetaBot.Data.Guild", b =>
                 {
                     b.Property<decimal>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("numeric(20,0)");
 
                     b.Property<DateTimeOffset>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
-                        .HasDefaultValue(new DateTimeOffset(new DateTime(2020, 1, 24, 21, 51, 15, 144, DateTimeKind.Unspecified).AddTicks(5833), new TimeSpan(0, 0, 0, 0, 0)));
+                        .HasDefaultValue(new DateTimeOffset(new DateTime(2020, 1, 28, 5, 22, 24, 236, DateTimeKind.Unspecified).AddTicks(1299), new TimeSpan(0, 0, 0, 0, 0)));
+
+                    b.Property<decimal?>("RaidSignupChannelId")
+                        .HasColumnType("numeric(20,0)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("guilds");
+                });
+
+            modelBuilder.Entity("AlphaBetaBot.Data.Raid", b =>
+                {
+                    b.Property<decimal>("Id")
+                        .HasColumnType("numeric(20,0)");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasDefaultValue(new DateTimeOffset(new DateTime(2020, 1, 28, 5, 22, 24, 227, DateTimeKind.Unspecified).AddTicks(9381), new TimeSpan(0, 0, 0, 0, 0)));
 
                     b.Property<int>("RaidLocationId")
                         .HasColumnType("integer");
@@ -69,7 +86,7 @@ namespace AlphaBetaBot.Data.Migrations
                     b.Property<DateTimeOffset>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
-                        .HasDefaultValue(new DateTimeOffset(new DateTime(2020, 1, 24, 21, 51, 15, 147, DateTimeKind.Unspecified).AddTicks(899), new TimeSpan(0, 0, 0, 0, 0)));
+                        .HasDefaultValue(new DateTimeOffset(new DateTime(2020, 1, 28, 5, 22, 24, 229, DateTimeKind.Unspecified).AddTicks(8648), new TimeSpan(0, 0, 0, 0, 0)));
 
                     b.Property<decimal>("Id")
                         .HasColumnType("numeric(20,0)");
@@ -89,7 +106,7 @@ namespace AlphaBetaBot.Data.Migrations
                     b.Property<DateTimeOffset>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
-                        .HasDefaultValue(new DateTimeOffset(new DateTime(2020, 1, 24, 21, 51, 15, 132, DateTimeKind.Unspecified).AddTicks(7836), new TimeSpan(0, 0, 0, 0, 0)));
+                        .HasDefaultValue(new DateTimeOffset(new DateTime(2020, 1, 28, 5, 22, 24, 218, DateTimeKind.Unspecified).AddTicks(3305), new TimeSpan(0, 0, 0, 0, 0)));
 
                     b.HasKey("Id");
 

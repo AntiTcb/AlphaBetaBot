@@ -10,7 +10,7 @@ using Qmmands;
 namespace AlphaBetaBot
 {
     [Name("Wow")]
-    public class WowModule : AbfModuleBase
+    public partial class WowModule : AbfModuleBase
     {
         [Name("Characters"), Group("character", "characters", "toons")]
         public class WowCharacterModule : AbfModuleBase
@@ -70,7 +70,8 @@ namespace AlphaBetaBot
         [Name("raid"), Group("raid", "raids")]
         [RequireOwner(Group = "perm")]
         [RequireUserPermissions(Permission.ManageGuild, Group = "perm")]
-        public class WowRaidModule : AbfModuleBase
+        [RequireGuild]
+        public partial class WowRaidModule : AbfModuleBase
         {
             [Command("add", "create")]
             public async Task AddRaid(DateTimeOffset raidTime, RaidLocationId raidLocation)
@@ -81,61 +82,28 @@ namespace AlphaBetaBot
                     return;
                 }
 
+                var signupChannel = Context.Guild.GetTextChannel(DbContext.Guild.RaidSignupChannelId.Value);
+
+                var signupMessage = await signupChannel.SendMessageAsync($"Signups for {raidLocation} at {raidTime} have started. Click the reaction with your class icon to sign up!");
+
                 var raid = new Raid
                 {
-                    Id = Context.Message.Id,
+                    Id = signupMessage.Id,
                     RaidLocationId = raidLocation,
                     RaidTime = raidTime
                 };
 
                 await DbContext.AddRaidAsync(raid);
-                await ReplyAsync("Raid added!");
-            }
-
-            [Command("signup")]
-            public async Task SignupToRaidAsync(IUserMessage raidSignupMessage)
-            {
-                var raid = await DbContext.GetRaidAsync(raidSignupMessage.Id);
-                var menu = new RaidSignupMenu(raid, DbContext);
-                await Context.Channel.StartMenuAsync(menu);
-            }
-
-            public class RaidSignupMenu : MenuBase
-            {
-                private Raid _raid;
-                private DatabaseCommandContext _dbContext;
-                
-                public RaidSignupMenu(Raid raid, DatabaseCommandContext dbContext) : base()
-                {
-                    _raid = raid;
-                    _dbContext = dbContext;
-                }
-                protected override async Task<IUserMessage> InitialiseAsync()
-                {
-                    var message = await Channel.SendMessageAsync($"Signups for the {_raid.RaidLocationId} raid at {_raid.RaidTime} have started! Please use the below buttons to sign up your character to the raid.");
-                    return message;
-                }
-
-                [Button("")]
-                public async Task SignupWarriorAsync(ButtonEventArgs e)
-                {
-                    if (e.WasAdded)
-                    {
-                        var user = await e.User.Downloadable.GetOrDownloadAsync();
-                    }
-                    else
-                    {
-
-                    }
-                }
+                await ReplyAsync("Raid signups started!");
             }
         }
 
         [Name("Settings"), Group("settings")]
+        [RequireGuild]
         public class WowSettingsModule : AbfModuleBase
         {
             [Command("signupchannel")]
-            public async Task SignupChannelAsync(IMessageChannel channel = null)
+            public async Task SignupChannelAsync(CachedTextChannel channel = null)
             {
                 ulong? channelId = DbContext.Guild.RaidSignupChannelId;
 

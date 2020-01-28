@@ -10,8 +10,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace AlphaBetaBot.Data.Migrations
 {
     [DbContext(typeof(AbfDbContext))]
-    [Migration("20200124222815_VirtualNavigationProperties")]
-    partial class VirtualNavigationProperties
+    [Migration("20200128051608_InitialMigration")]
+    partial class InitialMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -24,13 +24,12 @@ namespace AlphaBetaBot.Data.Migrations
             modelBuilder.Entity("AlphaBetaBot.Data.Raid", b =>
                 {
                     b.Property<decimal>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("numeric(20,0)");
 
                     b.Property<DateTimeOffset>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
-                        .HasDefaultValue(new DateTimeOffset(new DateTime(2020, 1, 24, 22, 28, 15, 692, DateTimeKind.Unspecified).AddTicks(5239), new TimeSpan(0, 0, 0, 0, 0)));
+                        .HasDefaultValue(new DateTimeOffset(new DateTime(2020, 1, 28, 5, 16, 8, 5, DateTimeKind.Unspecified).AddTicks(7378), new TimeSpan(0, 0, 0, 0, 0)));
 
                     b.Property<int>("RaidLocationId")
                         .HasColumnType("integer");
@@ -69,7 +68,7 @@ namespace AlphaBetaBot.Data.Migrations
                     b.Property<DateTimeOffset>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
-                        .HasDefaultValue(new DateTimeOffset(new DateTime(2020, 1, 24, 22, 28, 15, 694, DateTimeKind.Unspecified).AddTicks(8617), new TimeSpan(0, 0, 0, 0, 0)));
+                        .HasDefaultValue(new DateTimeOffset(new DateTime(2020, 1, 28, 5, 16, 8, 7, DateTimeKind.Unspecified).AddTicks(6426), new TimeSpan(0, 0, 0, 0, 0)));
 
                     b.Property<decimal>("Id")
                         .HasColumnType("numeric(20,0)");
@@ -89,7 +88,7 @@ namespace AlphaBetaBot.Data.Migrations
                     b.Property<DateTimeOffset>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
-                        .HasDefaultValue(new DateTimeOffset(new DateTime(2020, 1, 24, 22, 28, 15, 680, DateTimeKind.Unspecified).AddTicks(1788), new TimeSpan(0, 0, 0, 0, 0)));
+                        .HasDefaultValue(new DateTimeOffset(new DateTime(2020, 1, 28, 5, 16, 7, 996, DateTimeKind.Unspecified).AddTicks(4628), new TimeSpan(0, 0, 0, 0, 0)));
 
                     b.HasKey("Id");
 

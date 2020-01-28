@@ -13,6 +13,7 @@ namespace AlphaBetaBot.Data
 
         public DbSet<User> Users { get; set; }
         //public DbSet<WowCharacter> Characters { get; set; }
+        public DbSet<Guild> Guilds { get; set; }
         public DbSet<Raid> Raids { get; set; }
 
         public static Func<DatabaseActionEventArgs, Task> DatabaseUpdated;
@@ -21,14 +22,17 @@ namespace AlphaBetaBot.Data
         {
             _connectionStringProvider = connectionStringProvider;
 
+            var guildRepo = new GuildRepository(Guilds, this);
             var userRepo = new UserRepository(Users, this);
             //var characterRepo = new WowCharacterRepository(Characters, this);
             var raidRepo = new RaidRepository(Raids, this);
 
-            var repos = new List<object> { userRepo, raidRepo };
+            var repos = new List<object> { userRepo, raidRepo, guildRepo };
 
             _repositories = repos.AsReadOnly();
         }
+        public T RequestRepository<T>() => _repositories.OfType<T>().FirstOrDefault();
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
@@ -42,9 +46,10 @@ namespace AlphaBetaBot.Data
             builder.ApplyConfiguration(new UserConfiguration());
             builder.ApplyConfiguration(new RaidConfiguration());
             builder.ApplyConfiguration(new RaidParticipantConfiguration());
+            builder.ApplyConfiguration(new GuildConfiguration());
         }
 
-        public T RequestRepository<T>() => _repositories.OfType<T>().FirstOrDefault();
+        
 
         internal void InvokeEvent(DatabaseActionEventArgs e) => DatabaseUpdated?.Invoke(e);
     }

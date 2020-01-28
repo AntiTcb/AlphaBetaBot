@@ -30,7 +30,6 @@ namespace AlphaBetaBot.Data
         Paladin,
         Priest,
         Rogue,
-        Shaman,
         Warlock,
         Warrior
     }

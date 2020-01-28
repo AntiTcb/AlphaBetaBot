@@ -4,6 +4,7 @@ using System.Net;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using AlphaBetaBot.Data;
 using Disqord;
 using Disqord.Bot;
 using Disqord.Bot.Prefixes;
@@ -11,6 +12,8 @@ using Disqord.Events;
 using Disqord.Logging;
 using Disqord.Rest;
 using Humanizer;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Qmmands;
 
 namespace AlphaBetaBot
@@ -20,7 +23,7 @@ namespace AlphaBetaBot
         private readonly LogService _logger;
         private readonly AbfConfiguration _configuration;
 
-        public DiscordService(AbfConfigurationProvider configProvider, IPrefixProvider prefixProvider, DiscordBotConfiguration discordConfig = null) 
+        public DiscordService(AbfConfigurationProvider configProvider, IPrefixProvider prefixProvider, IServiceProvider services, DiscordBotConfiguration discordConfig = null) 
             : base(TokenType.Bot, configProvider.Configuration.DiscordToken, prefixProvider, discordConfig)
         {
             _logger = LogService.GetLogger("Discord");
@@ -30,12 +33,48 @@ namespace AlphaBetaBot
         public async Task SetupAsync(Assembly assembly)
         {
             Ready += OnReadyAsync;
-            CommandExecutionFailed += DiscordService_CommandExecutionFailed;
+            CommandExecutionFailed += HandleCommandExecutionFailedAsync;
             Logger.MessageLogged += OnMessageLogged;
-            
 
+            ReactionAdded += HandleRaidSignupAsync;
+            
             AddModules(assembly);
         }
+
+        private async Task HandleRaidSignupAsync(ReactionAddedEventArgs e)
+        {
+            var dbContext = this.GetRequiredService<AbfDbContext>();
+
+            await using (dbContext)
+            {
+                var raid = dbContext.Raids.FirstOrDefault(r => r.Id == e.Message.Id);
+
+                if (raid is null) return;
+                if (!_classNames.Contains(e.Reaction.Value.Emoji.Name)) return;
+
+                dbContext.Users.Include(u => u.Characters);
+                var user = await dbContext.Users.FindAsync(e.User.Id);
+
+                if (user is null) return;
+
+                var character = user.Characters.FirstOrDefault(c => c.Class.Humanize() == e.Reaction.Value.Emoji.Name);
+
+                if (character is null) return;
+
+                var participant = new RaidParticipant { Character = character, Raid = raid };
+
+                dbContext.Update(participant);
+
+                await dbContext.SaveChangesAsync();
+
+                var embed = new LocalEmbedBuilder().WithTitle($"Signed up people: {raid.Participants.Count}");
+
+                var msg = await e.Message.Downloadable.GetOrDownloadAsync();
+                await (msg as RestUserMessage).ModifyAsync(m => m.Embed = embed.Build());
+            }
+        }
+
+        static string[] _classNames = Enum.GetNames(typeof(WowClass));
 
         protected override async ValueTask AfterExecutedAsync(IResult result, DiscordCommandContext context)
         {
@@ -125,7 +164,7 @@ namespace AlphaBetaBot
             return ctx;
         }
 
-        private Task DiscordService_CommandExecutionFailed(CommandExecutionFailedEventArgs e)
+        private Task HandleCommandExecutionFailedAsync(CommandExecutionFailedEventArgs e)
         {
             var ctx = (AbfCommandContext)e.Context;
 

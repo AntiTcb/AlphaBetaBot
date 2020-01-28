@@ -45,6 +45,7 @@ namespace AlphaBetaBot
 
             var ds = _services.GetRequiredService<DiscordService>();
 
+
             await ds.SetupAsync(Assembly.GetEntryAssembly());
             await ds.AddExtensionAsync(_services.GetRequiredService<InteractivityExtension>());
 

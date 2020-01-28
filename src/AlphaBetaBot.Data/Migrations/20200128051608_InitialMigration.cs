@@ -25,7 +25,7 @@ namespace AlphaBetaBot.Data.Migrations
                 columns: table => new
                 {
                     Id = table.Column<decimal>(nullable: false),
-                    CreatedAt = table.Column<DateTimeOffset>(nullable: false, defaultValue: new DateTimeOffset(new DateTime(2020, 1, 24, 21, 51, 15, 132, DateTimeKind.Unspecified).AddTicks(7836), new TimeSpan(0, 0, 0, 0, 0)))
+                    CreatedAt = table.Column<DateTimeOffset>(nullable: false, defaultValue: new DateTimeOffset(new DateTime(2020, 1, 28, 5, 16, 7, 996, DateTimeKind.Unspecified).AddTicks(4628), new TimeSpan(0, 0, 0, 0, 0)))
                 },
                 constraints: table =>
                 {
@@ -37,7 +37,7 @@ namespace AlphaBetaBot.Data.Migrations
                 columns: table => new
                 {
                     Id = table.Column<decimal>(nullable: false),
-                    CreatedAt = table.Column<DateTimeOffset>(nullable: false, defaultValue: new DateTimeOffset(new DateTime(2020, 1, 24, 21, 51, 15, 144, DateTimeKind.Unspecified).AddTicks(5833), new TimeSpan(0, 0, 0, 0, 0))),
+                    CreatedAt = table.Column<DateTimeOffset>(nullable: false, defaultValue: new DateTimeOffset(new DateTime(2020, 1, 28, 5, 16, 8, 5, DateTimeKind.Unspecified).AddTicks(7378), new TimeSpan(0, 0, 0, 0, 0))),
                     RaidTime = table.Column<DateTimeOffset>(nullable: false),
                     RaidLocationId = table.Column<int>(nullable: false)
                 },
@@ -81,7 +81,7 @@ namespace AlphaBetaBot.Data.Migrations
                     CharacterId = table.Column<int>(nullable: false),
                     RaidId = table.Column<decimal>(nullable: false),
                     Id = table.Column<decimal>(nullable: false),
-                    CreatedAt = table.Column<DateTimeOffset>(nullable: false, defaultValue: new DateTimeOffset(new DateTime(2020, 1, 24, 21, 51, 15, 147, DateTimeKind.Unspecified).AddTicks(899), new TimeSpan(0, 0, 0, 0, 0)))
+                    CreatedAt = table.Column<DateTimeOffset>(nullable: false, defaultValue: new DateTimeOffset(new DateTime(2020, 1, 28, 5, 16, 8, 7, DateTimeKind.Unspecified).AddTicks(6426), new TimeSpan(0, 0, 0, 0, 0)))
                 },
                 constraints: table =>
                 {
