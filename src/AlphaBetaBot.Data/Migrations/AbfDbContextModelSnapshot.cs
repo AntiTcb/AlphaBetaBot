@@ -27,7 +27,7 @@ namespace AlphaBetaBot.Data.Migrations
                     b.Property<DateTimeOffset>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
-                        .HasDefaultValue(new DateTimeOffset(new DateTime(2020, 1, 28, 5, 22, 24, 236, DateTimeKind.Unspecified).AddTicks(1299), new TimeSpan(0, 0, 0, 0, 0)));
+                        .HasDefaultValue(new DateTimeOffset(new DateTime(2020, 1, 28, 20, 7, 18, 248, DateTimeKind.Unspecified).AddTicks(6035), new TimeSpan(0, 0, 0, 0, 0)));
 
                     b.Property<decimal?>("RaidSignupChannelId")
                         .HasColumnType("numeric(20,0)");
@@ -45,13 +45,13 @@ namespace AlphaBetaBot.Data.Migrations
                     b.Property<DateTimeOffset>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
-                        .HasDefaultValue(new DateTimeOffset(new DateTime(2020, 1, 28, 5, 22, 24, 227, DateTimeKind.Unspecified).AddTicks(9381), new TimeSpan(0, 0, 0, 0, 0)));
+                        .HasDefaultValue(new DateTimeOffset(new DateTime(2020, 1, 28, 20, 7, 18, 237, DateTimeKind.Unspecified).AddTicks(6244), new TimeSpan(0, 0, 0, 0, 0)));
 
                     b.Property<int>("RaidLocationId")
                         .HasColumnType("integer");
 
-                    b.Property<DateTimeOffset>("RaidTime")
-                        .HasColumnType("timestamp with time zone");
+                    b.Property<string>("RaidTime")
+                        .HasColumnType("text");
 
                     b.HasKey("Id");
 
@@ -71,27 +71,67 @@ namespace AlphaBetaBot.Data.Migrations
                     b.HasKey("RaidLocationId");
 
                     b.ToTable("raid_locations");
+
+                    b.HasData(
+                        new
+                        {
+                            RaidLocationId = 0,
+                            Name = "Onyxia"
+                        },
+                        new
+                        {
+                            RaidLocationId = 1,
+                            Name = "MoltenCore"
+                        },
+                        new
+                        {
+                            RaidLocationId = 2,
+                            Name = "BlackwingLair"
+                        },
+                        new
+                        {
+                            RaidLocationId = 3,
+                            Name = "ZulGurub"
+                        },
+                        new
+                        {
+                            RaidLocationId = 4,
+                            Name = "AQ20"
+                        },
+                        new
+                        {
+                            RaidLocationId = 5,
+                            Name = "AQ40"
+                        },
+                        new
+                        {
+                            RaidLocationId = 6,
+                            Name = "Naxxramas"
+                        });
                 });
 
             modelBuilder.Entity("AlphaBetaBot.Data.RaidParticipant", b =>
                 {
-                    b.Property<decimal>("RaidId")
-                        .HasColumnType("numeric(20,0)");
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
                     b.Property<int>("CharacterId")
                         .HasColumnType("integer");
 
-                    b.Property<DateTimeOffset>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
-                        .HasDefaultValue(new DateTimeOffset(new DateTime(2020, 1, 28, 5, 22, 24, 229, DateTimeKind.Unspecified).AddTicks(8648), new TimeSpan(0, 0, 0, 0, 0)));
-
-                    b.Property<decimal>("Id")
+                    b.Property<decimal>("RaidId")
                         .HasColumnType("numeric(20,0)");
 
-                    b.HasKey("RaidId", "CharacterId");
+                    b.Property<DateTimeOffset>("SignedUpAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
 
                     b.HasIndex("CharacterId");
+
+                    b.HasIndex("RaidId");
 
                     b.ToTable("raid_participants");
                 });
@@ -104,7 +144,7 @@ namespace AlphaBetaBot.Data.Migrations
                     b.Property<DateTimeOffset>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
-                        .HasDefaultValue(new DateTimeOffset(new DateTime(2020, 1, 28, 5, 22, 24, 218, DateTimeKind.Unspecified).AddTicks(3305), new TimeSpan(0, 0, 0, 0, 0)));
+                        .HasDefaultValue(new DateTimeOffset(new DateTime(2020, 1, 28, 20, 7, 18, 225, DateTimeKind.Unspecified).AddTicks(1950), new TimeSpan(0, 0, 0, 0, 0)));
 
                     b.HasKey("Id");
 

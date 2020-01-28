@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -8,7 +7,7 @@ namespace AlphaBetaBot.Data
     [Table("raids")]
     public class Raid : Entity
     {
-        public DateTimeOffset RaidTime { get; set; }
+        public string RaidTime { get; set; }
 
         public RaidLocationId RaidLocationId { get; set; }
         public RaidLocation RaidLocation { get; set; }

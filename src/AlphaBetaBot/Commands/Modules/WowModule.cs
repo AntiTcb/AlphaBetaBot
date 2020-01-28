@@ -1,10 +1,8 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using AlphaBetaBot.Data;
 using Disqord;
-using Disqord.Extensions.Interactivity.Menus;
 using Qmmands;
 
 namespace AlphaBetaBot
@@ -74,7 +72,7 @@ namespace AlphaBetaBot
         public partial class WowRaidModule : AbfModuleBase
         {
             [Command("add", "create")]
-            public async Task AddRaid(DateTimeOffset raidTime, RaidLocationId raidLocation)
+            public async Task AddRaid(RaidLocationId raidLocation, [Remainder] string raidTime)
             {
                 if (DbContext.Guild.RaidSignupChannelId is null)
                 {
@@ -86,6 +84,10 @@ namespace AlphaBetaBot
 
                 var signupMessage = await signupChannel.SendMessageAsync($"Signups for {raidLocation} at {raidTime} have started. Click the reaction with your class icon to sign up!");
 
+                var tasks = AbfConfiguration.ClassEmotes.Select(async ce => await signupMessage.AddReactionAsync(new LocalCustomEmoji(ce.Id, ce.Name)));
+
+                await Task.WhenAll(tasks);
+
                 var raid = new Raid
                 {
                     Id = signupMessage.Id,
@@ -94,7 +96,9 @@ namespace AlphaBetaBot
                 };
 
                 await DbContext.AddRaidAsync(raid);
-                await ReplyAsync("Raid signups started!");
+                
+                if (signupChannel.Id != Context.Channel.Id)
+                    await ReplyAsync("Raid signups started!");
             }
         }
 

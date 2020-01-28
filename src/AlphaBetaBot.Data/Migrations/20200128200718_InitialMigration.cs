@@ -9,6 +9,19 @@ namespace AlphaBetaBot.Data.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
+                name: "guilds",
+                columns: table => new
+                {
+                    Id = table.Column<decimal>(nullable: false),
+                    CreatedAt = table.Column<DateTimeOffset>(nullable: false, defaultValue: new DateTimeOffset(new DateTime(2020, 1, 28, 20, 7, 18, 248, DateTimeKind.Unspecified).AddTicks(6035), new TimeSpan(0, 0, 0, 0, 0))),
+                    RaidSignupChannelId = table.Column<decimal>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_guilds", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "raid_locations",
                 columns: table => new
                 {
@@ -25,7 +38,7 @@ namespace AlphaBetaBot.Data.Migrations
                 columns: table => new
                 {
                     Id = table.Column<decimal>(nullable: false),
-                    CreatedAt = table.Column<DateTimeOffset>(nullable: false, defaultValue: new DateTimeOffset(new DateTime(2020, 1, 28, 5, 16, 7, 996, DateTimeKind.Unspecified).AddTicks(4628), new TimeSpan(0, 0, 0, 0, 0)))
+                    CreatedAt = table.Column<DateTimeOffset>(nullable: false, defaultValue: new DateTimeOffset(new DateTime(2020, 1, 28, 20, 7, 18, 225, DateTimeKind.Unspecified).AddTicks(1950), new TimeSpan(0, 0, 0, 0, 0)))
                 },
                 constraints: table =>
                 {
@@ -37,8 +50,8 @@ namespace AlphaBetaBot.Data.Migrations
                 columns: table => new
                 {
                     Id = table.Column<decimal>(nullable: false),
-                    CreatedAt = table.Column<DateTimeOffset>(nullable: false, defaultValue: new DateTimeOffset(new DateTime(2020, 1, 28, 5, 16, 8, 5, DateTimeKind.Unspecified).AddTicks(7378), new TimeSpan(0, 0, 0, 0, 0))),
-                    RaidTime = table.Column<DateTimeOffset>(nullable: false),
+                    CreatedAt = table.Column<DateTimeOffset>(nullable: false, defaultValue: new DateTimeOffset(new DateTime(2020, 1, 28, 20, 7, 18, 237, DateTimeKind.Unspecified).AddTicks(6244), new TimeSpan(0, 0, 0, 0, 0))),
+                    RaidTime = table.Column<string>(nullable: true),
                     RaidLocationId = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
@@ -78,14 +91,15 @@ namespace AlphaBetaBot.Data.Migrations
                 name: "raid_participants",
                 columns: table => new
                 {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     CharacterId = table.Column<int>(nullable: false),
                     RaidId = table.Column<decimal>(nullable: false),
-                    Id = table.Column<decimal>(nullable: false),
-                    CreatedAt = table.Column<DateTimeOffset>(nullable: false, defaultValue: new DateTimeOffset(new DateTime(2020, 1, 28, 5, 16, 8, 7, DateTimeKind.Unspecified).AddTicks(6426), new TimeSpan(0, 0, 0, 0, 0)))
+                    SignedUpAt = table.Column<DateTimeOffset>(nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_raid_participants", x => new { x.RaidId, x.CharacterId });
+                    table.PrimaryKey("PK_raid_participants", x => x.Id);
                     table.ForeignKey(
                         name: "FK_raid_participants_characters_CharacterId",
                         column: x => x.CharacterId,
@@ -100,6 +114,20 @@ namespace AlphaBetaBot.Data.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.InsertData(
+                table: "raid_locations",
+                columns: new[] { "RaidLocationId", "Name" },
+                values: new object[,]
+                {
+                    { 0, "Onyxia" },
+                    { 1, "MoltenCore" },
+                    { 2, "BlackwingLair" },
+                    { 3, "ZulGurub" },
+                    { 4, "AQ20" },
+                    { 5, "AQ40" },
+                    { 6, "Naxxramas" }
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_characters_OwnerId",
                 table: "characters",
@@ -111,6 +139,11 @@ namespace AlphaBetaBot.Data.Migrations
                 column: "CharacterId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_raid_participants_RaidId",
+                table: "raid_participants",
+                column: "RaidId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_raids_RaidLocationId",
                 table: "raids",
                 column: "RaidLocationId");
@@ -118,6 +151,9 @@ namespace AlphaBetaBot.Data.Migrations
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "guilds");
+
             migrationBuilder.DropTable(
                 name: "raid_participants");
 

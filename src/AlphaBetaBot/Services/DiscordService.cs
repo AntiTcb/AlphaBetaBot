@@ -37,44 +37,65 @@ namespace AlphaBetaBot
             Logger.MessageLogged += OnMessageLogged;
 
             ReactionAdded += HandleRaidSignupAsync;
+            ReactionRemoved += HandleRaidResignAsync;
             
             AddModules(assembly);
         }
 
         private async Task HandleRaidSignupAsync(ReactionAddedEventArgs e)
         {
+            static string[] GetClassNames() => Enum.GetNames(typeof(WowClass));
+
+            if (!GetClassNames().Contains(e.Emoji.Name)) return;
+
             var dbContext = this.GetRequiredService<AbfDbContext>();
 
             await using (dbContext)
             {
-                var raid = dbContext.Raids.FirstOrDefault(r => r.Id == e.Message.Id);
+                var (check, raid, user, character) = await CheckForRaidAsync(e.Message.Id.RawValue, e.User.Id.RawValue, e.Emoji.Name, dbContext);
+                if (!check) return;
 
-                if (raid is null) return;
-                if (!_classNames.Contains(e.Reaction.Value.Emoji.Name)) return;
 
-                dbContext.Users.Include(u => u.Characters);
-                var user = await dbContext.Users.FindAsync(e.User.Id);
+                if (raid.Participants.Any(p => p.CharacterId == character.Id)) return;
 
-                if (user is null) return;
+                var participant = new RaidParticipant { Character = character, Raid = raid, SignedUpAt = DateTimeOffset.UtcNow };
 
-                var character = user.Characters.FirstOrDefault(c => c.Class.Humanize() == e.Reaction.Value.Emoji.Name);
-
-                if (character is null) return;
-
-                var participant = new RaidParticipant { Character = character, Raid = raid };
-
-                dbContext.Update(participant);
+                raid.Participants.Add(participant);
+                dbContext.Update(raid);
 
                 await dbContext.SaveChangesAsync();
 
-                var embed = new LocalEmbedBuilder().WithTitle($"Signed up people: {raid.Participants.Count}");
-
-                var msg = await e.Message.Downloadable.GetOrDownloadAsync();
-                await (msg as RestUserMessage).ModifyAsync(m => m.Embed = embed.Build());
+                var msg = await e.Message.Downloadable.GetOrDownloadAsync() as RestUserMessage;
+                await CreateRaidEmbedAsync(msg, raid);
             }
         }
 
-        static string[] _classNames = Enum.GetNames(typeof(WowClass));
+        private async Task HandleRaidResignAsync(ReactionRemovedEventArgs e)
+        {
+            static string[] GetClassNames() => Enum.GetNames(typeof(WowClass));
+
+            if (!GetClassNames().Contains(e.Emoji.Name)) return;
+
+            var dbContext = this.GetRequiredService<AbfDbContext>();
+
+            await using (dbContext)
+            {
+                var (check, raid, user, character) = await CheckForRaidAsync(e.Message.Id.RawValue, e.User.Id.RawValue, e.Emoji.Name, dbContext);
+                if (!check) return;
+
+                var charToRemove = raid.Participants.FirstOrDefault(p => p.CharacterId == character.Id);
+
+                if (charToRemove is null) return;
+
+                raid.Participants.Remove(charToRemove);
+                dbContext.Update(raid);
+
+                await dbContext.SaveChangesAsync();
+
+                var msg = await e.Message.Downloadable.GetOrDownloadAsync() as RestUserMessage;
+                await CreateRaidEmbedAsync(msg, raid);
+            }
+        }
 
         protected override async ValueTask AfterExecutedAsync(IResult result, DiscordCommandContext context)
         {
@@ -216,6 +237,43 @@ namespace AlphaBetaBot
             _logger.Info("AlphaBetaBot is ready.");
 
             return e.Client.SetPresenceAsync(UserStatus.Online, new LocalActivity("Classic WoW", ActivityType.Playing));
+        }
+
+        private static async Task CreateRaidEmbedAsync(RestUserMessage msg, Raid raid)
+        {
+            var embed = new LocalEmbedBuilder().WithTitle($"Roster: {raid.Participants.Count}");
+
+            var lines = raid.Participants.OrderBy(p => p.SignedUpAt).Select((i, p) => $"{i}) {p}");
+            var roleCounts = raid.Participants.GroupBy(p => p.Character.Role).Select(g => (Role: g.Key, Count: g.Count()));
+            var classCounts = raid.Participants.GroupBy(rp => rp.Character.Class).Select(g => (Class: g.Key, Count: g.Count()));
+
+            embed.WithDescription(string.Join('\n', lines));
+
+            foreach (var (Role, Count) in roleCounts)
+                embed.AddField(Role.ToString(), Count);
+        
+            foreach (var (Class, Count) in classCounts)
+                embed.AddField(Class.ToString(), Count, true);
+
+            await msg.ModifyAsync(m => m.Embed = embed.Build());
+        }
+
+        private static async Task<(bool, Raid, User, WowCharacter)> CheckForRaidAsync(ulong messageId, ulong userId, string emoteName, AbfDbContext dbContext)
+        {
+            await dbContext.Raids.Include(r => r.Participants).ToListAsync();
+            var raid = await dbContext.Raids.FirstOrDefaultAsync(r => r.Id == messageId);
+
+            if (raid is null) return (false, null, null, null);
+
+            await dbContext.Users.Include(u => u.Characters).ToListAsync();
+            var user = await dbContext.Users.FindAsync(userId);
+
+            if (user is null) return (false, raid, null, null);
+
+            var character = user.Characters.FirstOrDefault(c => c.Class.Humanize() == emoteName);
+            if (character is null) return (false, raid, user, null);
+
+            return (true, raid, user, character);
         }
     }
 }

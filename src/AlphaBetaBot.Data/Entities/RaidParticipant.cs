@@ -1,23 +1,32 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using System;
+using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace AlphaBetaBot.Data
 {
     [Table("raid_participants")]
-    public class RaidParticipant : Entity
+    public class RaidParticipant
     {
+        public int Id { get; set; }
+
         public int CharacterId { get; set; }
         public WowCharacter Character { get; set; }
         public ulong RaidId { get; set; }
         public Raid Raid { get; set; }
+        public DateTimeOffset SignedUpAt { get; set; }
     }
-    public class RaidParticipantConfiguration : EntityConfiguration<RaidParticipant>
+    public class RaidParticipantConfiguration : IEntityTypeConfiguration<RaidParticipant>
     {
-        public override void Configure(EntityTypeBuilder<RaidParticipant> builder)
+        public void Configure(EntityTypeBuilder<RaidParticipant> builder)
         {
-            base.Configure(builder);
+            builder.HasKey(rp => rp.Id);
 
-            builder.HasKey(rp => new { rp.RaidId, rp.CharacterId });
+            builder.Property(rp => rp.Id)
+                .ValueGeneratedOnAdd();
+
+            builder.Property(rp => rp.SignedUpAt)
+                .ValueGeneratedOnAdd();
 
             builder.HasOne(rp => rp.Character)
                 .WithMany(r => r.RaidsAttending)

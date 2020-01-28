@@ -45,6 +45,7 @@ namespace AlphaBetaBot.Data
         {
             builder.ApplyConfiguration(new UserConfiguration());
             builder.ApplyConfiguration(new RaidConfiguration());
+            builder.ApplyConfiguration(new RaidLocationConfiguration());
             builder.ApplyConfiguration(new RaidParticipantConfiguration());
             builder.ApplyConfiguration(new GuildConfiguration());
         }

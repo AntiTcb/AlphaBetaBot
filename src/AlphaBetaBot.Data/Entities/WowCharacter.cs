@@ -20,6 +20,8 @@ namespace AlphaBetaBot.Data
         public ClassRole Role { get; set; }
 
         public virtual ICollection<RaidParticipant> RaidsAttending { get; set; }
+
+        public override string ToString() => $"{CharacterName} | {Class} | {Role}"; 
     }
 
     public enum WowClass
@@ -36,7 +38,7 @@ namespace AlphaBetaBot.Data
 
     public enum ClassRole
     {
-        Caster,
+        Ranged,
         Healer,
         Melee,
         Tank
