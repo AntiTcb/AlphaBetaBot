@@ -3,6 +3,7 @@ using System.Text;
 using System.Threading.Tasks;
 using AlphaBetaBot.Data;
 using Disqord;
+using Humanizer;
 using Qmmands;
 
 namespace AlphaBetaBot
@@ -82,7 +83,7 @@ namespace AlphaBetaBot
 
                 var signupChannel = Context.Guild.GetTextChannel(DbContext.Guild.RaidSignupChannelId.Value);
 
-                var signupMessage = await signupChannel.SendMessageAsync($"Signups for {raidLocation} at {raidTime} have started. Click the reaction with your class icon to sign up!");
+                var signupMessage = await signupChannel.SendMessageAsync($"Signups for {raidLocation.Humanize()} at {raidTime} have started. Click the reaction with your class icon to sign up!");
 
                 var tasks = AbfConfiguration.ClassEmojis.Values.Select(async ce => await signupMessage.AddReactionAsync(ce));
 
