@@ -84,7 +84,7 @@ namespace AlphaBetaBot
 
                 var signupMessage = await signupChannel.SendMessageAsync($"Signups for {raidLocation} at {raidTime} have started. Click the reaction with your class icon to sign up!");
 
-                var tasks = AbfConfiguration.ClassEmotes.Select(async ce => await signupMessage.AddReactionAsync(new LocalCustomEmoji(ce.Id, ce.Name)));
+                var tasks = AbfConfiguration.ClassEmojis.Values.Select(async ce => await signupMessage.AddReactionAsync(ce));
 
                 await Task.WhenAll(tasks);
 

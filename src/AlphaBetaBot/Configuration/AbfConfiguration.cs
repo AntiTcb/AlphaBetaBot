@@ -1,4 +1,6 @@
-﻿using Disqord;
+﻿using System.Collections.Generic;
+using AlphaBetaBot.Data;
+using Disqord;
 
 namespace AlphaBetaBot
 {
@@ -6,27 +8,16 @@ namespace AlphaBetaBot
     {
         public string DiscordToken { get; set; }
 
-        public static (string Name, ulong Id)[] ClassEmotes { get; } = new[] {
-            ("Warrior", 671579050489282580UL),
-            ("Druid", 671579050023845997UL),
-            ("Rogue", 671579050518773777UL),
-            ("Hunter", 671579050203938847UL),
-            ("Mage", 671579050518511648UL),
-            ("Warlock", 671579050505928704UL),
-            ("Priest", 671579050250338306UL),
-            ("Paladin", 671579050514579486UL)
-        };
-
-        public static LocalCustomEmoji[] ClassEmojis { get; } = new[]
+        public static Dictionary<WowClass, LocalCustomEmoji> ClassEmojis { get; } = new Dictionary<WowClass, LocalCustomEmoji>
         {
-            new LocalCustomEmoji(671579050489282580, "Warrior"),
-            new LocalCustomEmoji(671579050023845997, "Druid"),
-            new LocalCustomEmoji(671579050518773777, "Rogue"),
-            new LocalCustomEmoji(671579050203938847, "Hunter"),
-            new LocalCustomEmoji(671579050518511648, "Mage"),
-            new LocalCustomEmoji(671579050505928704, "Warlock"),
-            new LocalCustomEmoji(671579050250338306, "Priest"),
-            new LocalCustomEmoji(671579050514579486, "Paladin")
+            { WowClass.Warrior, new LocalCustomEmoji(671579050489282580, "Warrior") },
+            { WowClass.Druid, new LocalCustomEmoji(671579050023845997, "Druid") },
+            { WowClass.Rogue,  new LocalCustomEmoji(671579050518773777, "Rogue") },
+            { WowClass.Hunter, new LocalCustomEmoji(671579050203938847, "Hunter") },
+            { WowClass.Mage, new LocalCustomEmoji(671579050518511648, "Mage") },
+            { WowClass.Warlock, new LocalCustomEmoji(671579050505928704, "Warlock") },
+            { WowClass.Priest, new LocalCustomEmoji(671579050250338306, "Priest") },
+            { WowClass.Paladin, new LocalCustomEmoji(671579050514579486, "Paladin") }
         };
     }
 }

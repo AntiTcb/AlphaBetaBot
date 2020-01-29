@@ -17,7 +17,7 @@ namespace AlphaBetaBot
             _logger = new LoggerConfiguration()
                 .MinimumLevel.Debug()
                 .WriteTo.Console(restrictedToMinimumLevel: LogEventLevel.Information)
-                .WriteTo.File($"{name}.txt", rollingInterval: RollingInterval.Day)
+                .WriteTo.File($"./logs/{name}.txt", rollingInterval: RollingInterval.Day)
                 .CreateLogger();
         }
 

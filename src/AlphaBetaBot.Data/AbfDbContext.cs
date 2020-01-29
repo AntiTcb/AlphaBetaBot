@@ -50,8 +50,6 @@ namespace AlphaBetaBot.Data
             builder.ApplyConfiguration(new GuildConfiguration());
         }
 
-        
-
         internal void InvokeEvent(DatabaseActionEventArgs e) => DatabaseUpdated?.Invoke(e);
     }
 }

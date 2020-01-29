@@ -243,7 +243,7 @@ namespace AlphaBetaBot
         {
             var embed = new LocalEmbedBuilder().WithTitle($"Roster: {raid.Participants.Count}");
 
-            var lines = raid.Participants.OrderBy(p => p.SignedUpAt).Select((i, p) => $"{i}) {p}");
+            var lines = raid.Participants.OrderBy(p => p.SignedUpAt).Select((p, i) => $"{i + 1}) {AbfConfiguration.ClassEmojis[p.Character.Class]} | {p.Character.CharacterName} | {p.Character.Role}");
             var roleCounts = raid.Participants.GroupBy(p => p.Character.Role).Select(g => (Role: g.Key, Count: g.Count()));
             var classCounts = raid.Participants.GroupBy(rp => rp.Character.Class).Select(g => (Class: g.Key, Count: g.Count()));
 
