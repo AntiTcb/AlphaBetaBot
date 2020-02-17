@@ -1,4 +1,6 @@
-﻿using Disqord.Bot;
+﻿using System.Threading.Tasks;
+using Disqord;
+using Disqord.Bot;
 
 namespace AlphaBetaBot
 {
@@ -6,5 +8,6 @@ namespace AlphaBetaBot
     {
         public DatabaseCommandContext DbContext => Context.DatabaseContext;
 
+        public Task ConfirmAsync() => Context.Message.AddReactionAsync(new LocalEmoji("✅"));
     }
 }
