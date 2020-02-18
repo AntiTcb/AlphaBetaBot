@@ -8,6 +8,6 @@ namespace AlphaBetaBot
     {
         public DatabaseCommandContext DbContext => Context.DatabaseContext;
 
-        public Task ConfirmAsync() => Context.Message.AddReactionAsync(new LocalEmoji("✅"));
+        public async Task ConfirmAsync() => Context.Message.AddReactionAsync(new LocalEmoji("✅"));
     }
 }

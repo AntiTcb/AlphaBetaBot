@@ -50,9 +50,7 @@ namespace AlphaBetaBot
         public async Task SignupToRaidAsync(RaidParticipant raidParticipant)
         {
             var raid = await _raids.GetAsync(raidParticipant.RaidId);
-
         }
-
         public Task UpdateUserAsync() => _users.UpdateAsync(User);
     }
 }

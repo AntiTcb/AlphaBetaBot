@@ -13,7 +13,7 @@ namespace AlphaBetaBot.Data.Migrations
                 columns: table => new
                 {
                     Id = table.Column<decimal>(nullable: false),
-                    CreatedAt = table.Column<DateTimeOffset>(nullable: false, defaultValue: new DateTimeOffset(new DateTime(2020, 1, 28, 20, 7, 18, 248, DateTimeKind.Unspecified).AddTicks(6035), new TimeSpan(0, 0, 0, 0, 0))),
+                    CreatedAt = table.Column<DateTimeOffset>(nullable: false, defaultValue: new DateTimeOffset(new DateTime(2020, 2, 18, 5, 46, 20, 692, DateTimeKind.Unspecified).AddTicks(2325), new TimeSpan(0, 0, 0, 0, 0))),
                     RaidSignupChannelId = table.Column<decimal>(nullable: true)
                 },
                 constraints: table =>
@@ -38,7 +38,7 @@ namespace AlphaBetaBot.Data.Migrations
                 columns: table => new
                 {
                     Id = table.Column<decimal>(nullable: false),
-                    CreatedAt = table.Column<DateTimeOffset>(nullable: false, defaultValue: new DateTimeOffset(new DateTime(2020, 1, 28, 20, 7, 18, 225, DateTimeKind.Unspecified).AddTicks(1950), new TimeSpan(0, 0, 0, 0, 0)))
+                    CreatedAt = table.Column<DateTimeOffset>(nullable: false, defaultValue: new DateTimeOffset(new DateTime(2020, 2, 18, 5, 46, 20, 674, DateTimeKind.Unspecified).AddTicks(41), new TimeSpan(0, 0, 0, 0, 0)))
                 },
                 constraints: table =>
                 {
@@ -50,8 +50,8 @@ namespace AlphaBetaBot.Data.Migrations
                 columns: table => new
                 {
                     Id = table.Column<decimal>(nullable: false),
-                    CreatedAt = table.Column<DateTimeOffset>(nullable: false, defaultValue: new DateTimeOffset(new DateTime(2020, 1, 28, 20, 7, 18, 237, DateTimeKind.Unspecified).AddTicks(6244), new TimeSpan(0, 0, 0, 0, 0))),
-                    RaidTime = table.Column<string>(nullable: true),
+                    CreatedAt = table.Column<DateTimeOffset>(nullable: false, defaultValue: new DateTimeOffset(new DateTime(2020, 2, 18, 5, 46, 20, 683, DateTimeKind.Unspecified).AddTicks(5868), new TimeSpan(0, 0, 0, 0, 0))),
+                    RaidTime = table.Column<DateTimeOffset>(nullable: false),
                     RaidLocationId = table.Column<int>(nullable: false)
                 },
                 constraints: table =>

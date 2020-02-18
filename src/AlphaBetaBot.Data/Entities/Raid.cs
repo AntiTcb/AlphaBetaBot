@@ -8,9 +8,7 @@ namespace AlphaBetaBot.Data
     [Table("raids")]
     public class Raid : Entity
     {
-        public string RaidTime { get; set; }
-
-        public DateTimeOffset ActualRaidTime { get; set; }
+        public DateTimeOffset RaidTime { get; set; }
 
         public RaidLocationId RaidLocationId { get; set; }
         public RaidLocation RaidLocation { get; set; }

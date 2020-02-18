@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using AlphaBetaBot.Data;
 using Qmmands;
@@ -16,7 +17,7 @@ namespace AlphaBetaBot
                 return new TypeParserResult<WowCharacter>("Invalid context type.");
             }
 
-            var character = ctx.DatabaseContext.User.Characters.FirstOrDefault(c => c.CharacterName == value);
+            var character = ctx.DatabaseContext.User.Characters.FirstOrDefault(c => string.Equals(c.CharacterName, value, StringComparison.OrdinalIgnoreCase));
 
             if (character is null)
                 return new TypeParserResult<WowCharacter>("Character not found.");

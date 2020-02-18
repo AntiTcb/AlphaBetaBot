@@ -42,6 +42,8 @@ namespace AlphaBetaBot
             AddModules(assembly);
 
             AddTypeParser(WowCharacterParser.Instance);
+            AddTypeParser(RaidTimeParser.Instance);
+            AddTypeParser(RaidLocationParser.Instance);
         }
 
         private static string[] GetClassNames() => Enum.GetNames(typeof(WowClass));
@@ -67,7 +69,7 @@ namespace AlphaBetaBot
 
                 await dbContext.SaveChangesAsync();
 
-                var msg = await e.Message.Downloadable.GetOrDownloadAsync() as RestUserMessage;
+                var msg = await e.Message.FetchAsync() as RestUserMessage;
                 await WowRaidModule.CreateRaidEmbedAsync(msg, raid);
             }
         }
@@ -92,7 +94,7 @@ namespace AlphaBetaBot
 
                 await dbContext.SaveChangesAsync();
 
-                var msg = await e.Message.Downloadable.GetOrDownloadAsync() as RestUserMessage;
+                var msg = await e.Message.FetchAsync() as RestUserMessage;
                 await WowRaidModule.CreateRaidEmbedAsync(msg, raid);
             }
         }

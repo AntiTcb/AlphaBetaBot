@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using AlphaBetaBot.Data;
@@ -34,6 +35,9 @@ namespace AlphaBetaBot
         }
 
         [Command("add")]
+        public Task AddCharacterAsync(string characterName, ClassRole role, WowClass @class) => AddCharacterAsync(characterName, @class, role);
+
+        [Command("add")]
         public async Task AddCharacterAsync(string characterName, WowClass @class, ClassRole role)
         {
             if (DbContext.User.Characters.Any(c => c.Class == @class))
@@ -50,7 +54,6 @@ namespace AlphaBetaBot
             };
 
             DbContext.User.Characters.Add(character);
-            //await ReplyAsync($"Added character {character.CharacterName} | {character.Class} | {character.Role}");
             await ConfirmAsync();
         }
 
@@ -63,15 +66,13 @@ namespace AlphaBetaBot
         }
 
         [Command("remove", "delete")]
-        public async Task RemoveCharacterAsync(string characterName)
-        {
-            var character = DbContext.User.Characters.FirstOrDefault(c => c.CharacterName == characterName);
-                
+        public async Task RemoveCharacterAsync(WowCharacter character)
+        {                
             if (character is null)
                 await ReplyAsync("Character not found.");
             else {
                 DbContext.User.Characters.Remove(character);
-                await ReplyAsync($"{characterName} was removed from your character list.");
+                await ReplyAsync($"{character.CharacterName} was removed from your character list.");
             }
         }
     }

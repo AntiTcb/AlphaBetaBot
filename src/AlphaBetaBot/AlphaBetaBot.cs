@@ -3,6 +3,7 @@ using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using AlphaBetaBot.Data;
+using Disqord;
 using Disqord.Bot;
 using Disqord.Bot.Prefixes;
 using Disqord.Extensions.Interactivity;
@@ -67,11 +68,11 @@ namespace AlphaBetaBot
                 .AddSingleton(x => new DiscordBotConfiguration
                 {
                     ProviderFactory = _ => x,
-                    CommandService = new CommandService(new CommandServiceConfiguration
+                    CommandServiceConfiguration = new CommandServiceConfiguration
                     {
                         IgnoresExtraArguments = true,
                         StringComparison = StringComparison.OrdinalIgnoreCase
-                    })
+                    }
                 })
                 .AddSingleton<DiscordService>()
                 .AddSingleton<InteractivityExtension>()
