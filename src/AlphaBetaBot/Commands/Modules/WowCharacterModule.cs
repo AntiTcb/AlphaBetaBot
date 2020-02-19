@@ -71,7 +71,7 @@ namespace AlphaBetaBot
             if (character is null)
                 await ReplyAsync("Character not found.");
             else {
-                DbContext.User.Characters.Remove(character);
+                DbContext.Database.Remove(character);
                 await ReplyAsync($"{character.CharacterName} was removed from your character list.");
             }
         }
