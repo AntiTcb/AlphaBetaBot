@@ -9,14 +9,14 @@ using Qmmands;
 
 namespace AlphaBetaBot
 {
-    [Name("raid"), Group("raid", "raids")]
+    [Name("Raids"), Group("raid", "raids")]
     [RequireOwner(Group = "perm")]
     [RequireUserPermissions(Permission.ManageGuild, Group = "perm")]
-    [RequireGuild]
     public class WowRaidModule : AbfModuleBase
     {
         [Command("add", "create")]
-        public async Task AddRaidAsync([OverrideTypeParser(typeof(RaidLocationParser))] RaidLocationId raidLocation, [Remainder] RaidTime raidTime)
+        [Description("Creates a raid for everyone to sign up for!")]
+        public async Task AddRaidAsync([OverrideTypeParser(typeof(RaidLocationParser))] [Description("Raid dungeon: MC|Ony|BWL|ZG|AQ20/40|Naxx")] RaidLocationId raidLocation, [Description("Raid time: MM/DD HH AM/PM format!")] [Remainder] RaidTime raidTime)
         {
             ulong channelId = DbContext.Guild.RaidSignupChannelId ?? Context.Channel.Id;
 

@@ -12,6 +12,7 @@ namespace AlphaBetaBot
     public class WowCharacterModule : AbfModuleBase
     {
         [Command("list", "")]
+        [Description("Lists off all the characters you've registered with the bot.")]
         public async Task ListCharactersAsync()
         {
             var characters = DbContext.User.Characters;
@@ -35,10 +36,13 @@ namespace AlphaBetaBot
         }
 
         [Command("add")]
-        public Task AddCharacterAsync(string characterName, ClassRole role, WowClass @class) => AddCharacterAsync(characterName, @class, role);
+        [Description("Adds a character to the bot.")]
+        public Task AddCharacterAsync([Description("Character Name")] string characterName, [Description("Role: Tank|Healer|Melee|Ranged")] ClassRole role, [Description("Class: Druid|Hunter|Mage|Paladin|Priest|Warlock|Warrior")] WowClass @class) 
+            => AddCharacterAsync(characterName, @class, role);
 
         [Command("add")]
-        public async Task AddCharacterAsync(string characterName, WowClass @class, ClassRole role)
+        [Description("Adds a character to the bot.")]
+        public async Task AddCharacterAsync([Description("Character Name")] string characterName, [Description("Class: Druid|Hunter|Mage|Paladin|Priest|Warlock|Warrior")] WowClass @class, [Description("Role: Tank|Healer|Melee|Ranged")] ClassRole role)
         {
             if (DbContext.User.Characters.Any(c => c.Class == @class))
             {
@@ -57,8 +61,9 @@ namespace AlphaBetaBot
             await ConfirmAsync();
         }
 
-        [Command("edit")]
-        public async Task EditCharacterAsync(WowCharacter character, ClassRole role)
+        [Command("changerole")]
+        [Description("Change the role of the specified character.")]
+        public async Task EditCharacterAsync([Description("Character Name")] WowCharacter character, [Description("Role: Tank|Healer|Melee|Ranged")] ClassRole role)
         {
             character.Role = role;
 
@@ -66,7 +71,8 @@ namespace AlphaBetaBot
         }
 
         [Command("remove", "delete")]
-        public async Task RemoveCharacterAsync(WowCharacter character)
+        [Description("Removes the specified character from your character list.")]
+        public async Task RemoveCharacterAsync([Description("Character Name")] WowCharacter character)
         {                
             if (character is null)
                 await ReplyAsync("Character not found.");
