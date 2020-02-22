@@ -11,8 +11,9 @@ namespace AlphaBetaBot
     [Name("Characters"), Group("character", "characters", "toons")]
     public class WowCharacterModule : AbfModuleBase
     {
-        [Command("list", "")]
+        [Command("list")]
         [Description("Lists off all the characters you've registered with the bot.")]
+        [Remarks("!characters list")]
         public async Task ListCharactersAsync()
         {
             var characters = DbContext.User.Characters;
@@ -37,11 +38,13 @@ namespace AlphaBetaBot
 
         [Command("add")]
         [Description("Adds a character to the bot.")]
+        [Remarks("!characters add Gnomeorpuns Ranged Mage")]
         public Task AddCharacterAsync([Description("Character Name")] string characterName, [Description("Role: Tank|Healer|Melee|Ranged")] ClassRole role, [Description("Class: Druid|Hunter|Mage|Paladin|Priest|Warlock|Warrior")] WowClass @class) 
             => AddCharacterAsync(characterName, @class, role);
 
         [Command("add")]
         [Description("Adds a character to the bot.")]
+        [Remarks("!characters add Gnomeorpuns Mage Ranged")]
         public async Task AddCharacterAsync([Description("Character Name")] string characterName, [Description("Class: Druid|Hunter|Mage|Paladin|Priest|Warlock|Warrior")] WowClass @class, [Description("Role: Tank|Healer|Melee|Ranged")] ClassRole role)
         {
             if (DbContext.User.Characters.Any(c => c.Class == @class))
@@ -63,6 +66,7 @@ namespace AlphaBetaBot
 
         [Command("changerole")]
         [Description("Change the role of the specified character.")]
+        [Remarks("!characters Youther Healer")]
         public async Task EditCharacterAsync([Description("Character Name")] WowCharacter character, [Description("Role: Tank|Healer|Melee|Ranged")] ClassRole role)
         {
             character.Role = role;
@@ -72,6 +76,7 @@ namespace AlphaBetaBot
 
         [Command("remove", "delete")]
         [Description("Removes the specified character from your character list.")]
+        [Remarks("!characters remove Perishable")]
         public async Task RemoveCharacterAsync([Description("Character Name")] WowCharacter character)
         {                
             if (character is null)

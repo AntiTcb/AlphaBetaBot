@@ -10,6 +10,7 @@ namespace AlphaBetaBot
     {
         [Command("signupchannel")]
         [Description("Gets or sets the default raid signup channel. This channel is where raid signups will always go.")]
+        [Remarks("!settings signupchannel #raid-signups")]
         public async Task SignupChannelAsync(CachedTextChannel channel = null)
         {
             ulong? channelId = DbContext.Guild.RaidSignupChannelId;

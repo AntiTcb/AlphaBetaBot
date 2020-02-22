@@ -16,6 +16,7 @@ namespace AlphaBetaBot
     {
         [Command("add", "create")]
         [Description("Creates a raid for everyone to sign up for!")]
+        [Remarks("!raid create BWL 03/10 7PM")]
         public async Task AddRaidAsync([OverrideTypeParser(typeof(RaidLocationParser))] [Description("Raid dungeon: MC|Ony|BWL|ZG|AQ20/40|Naxx")] RaidLocationId raidLocation, [Description("Raid time: MM/DD HH AM/PM format!")] [Remainder] RaidTime raidTime)
         {
             ulong channelId = DbContext.Guild.RaidSignupChannelId ?? Context.Channel.Id;

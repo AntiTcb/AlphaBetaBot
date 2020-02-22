@@ -115,7 +115,7 @@ namespace AlphaBetaBot
 
                 embed = new LocalEmbedBuilder
                 {
-                    Title = "Help",
+                    Title = $"Help - {matchingModule.Name} Module",
                     Description = "This embed contains the list of every command in this module.",
                     Footer = new LocalEmbedFooterBuilder
                     {
@@ -156,7 +156,7 @@ namespace AlphaBetaBot
                 {
                     builder.AppendLine($"`[{param.Name}]`: {param.Description ?? "Undocumented."}");
                 }
-                builder.AppendLine();
+                builder.AppendLine($"\n**Example:** `{cmd.Command.Remarks ?? "No example provided."}`\n");
             }
 
             embed.AddField("Usages", builder.ToString());
