@@ -44,8 +44,11 @@ namespace AlphaBetaBot
 
         public static async Task CreateRaidEmbedAsync(RestUserMessage msg, Raid raid)
         {
+            var westernTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Pacific Standard Time");
+            var localDateTime = TimeZoneInfo.ConvertTime(raid.RaidTime, westernTimeZone);
+
             var embed = new LocalEmbedBuilder()
-                .WithTitle($"{raid.RaidLocationId.Humanize().Transform(To.TitleCase)} - {raid.RaidTime.ToString("MM/dd @ hh tt")}");
+                .WithTitle($"{raid.RaidLocationId.Humanize().Transform(To.TitleCase)} - {localDateTime.ToString("MM/dd @ hh tt")}");
 
             var lines = raid.Participants.OrderBy(p => p.SignedUpAt).Select(p => $"{AbfConfiguration.ClassEmojis[p.Character.Class]} | {p.Character.CharacterName} | {p.Character.Role.Humanize()[0]}");
             var roleCounts = Enum.GetNames(typeof(ClassRole)).Select(r => (Role: Enum.Parse<ClassRole>(r), Count: raid.Participants.Count(rp => rp.Character.Role == Enum.Parse<ClassRole>(r))));

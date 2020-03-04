@@ -134,6 +134,7 @@ namespace AlphaBetaBot
                     {
                         str.AppendLine($" -> `{overload.Value.Reason}`");
                     }
+                    str.AppendLine($"Example: `{ctx.Command.Remarks}`");
                     break;
                 case ParameterChecksFailedResult err:
                     str.AppendLine("The following parameter check(s) failed:");
@@ -173,7 +174,9 @@ namespace AlphaBetaBot
             embed.AddField("__Error(s)__", str.ToString());
 
             _logger.Warning($"{ctx.User.Id} - {ctx.Guild.Id} ::> Command errored: {ctx.Command?.Name ?? "-unknown command-"}");
-            await ctx.Channel.SendMessageAsync("", false, embed.Build());
+            var msg = await ctx.Channel.SendMessageAsync("", false, embed.Build());
+
+            _ = Task.Run(async () => { await Task.Delay(TimeSpan.FromSeconds(20)); await msg.DeleteAsync(); });
 
             await ctx.DisposeAsync();
         }
