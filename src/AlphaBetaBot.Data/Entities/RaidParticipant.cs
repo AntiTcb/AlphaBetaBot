@@ -15,6 +15,8 @@ namespace AlphaBetaBot.Data
         public ulong RaidId { get; set; }
         public Raid Raid { get; set; }
         public DateTimeOffset SignedUpAt { get; set; }
+
+        public override string ToString() => $"{Character} | {RaidId} | {Raid.RaidLocationId}";
     }
     public class RaidParticipantConfiguration : IEntityTypeConfiguration<RaidParticipant>
     {

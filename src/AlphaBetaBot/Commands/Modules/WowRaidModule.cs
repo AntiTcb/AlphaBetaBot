@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using AlphaBetaBot.Data;
 using Disqord;
 using Disqord.Rest;
 using Humanizer;
 using Qmmands;
+using TimeZoneConverter;
 
 namespace AlphaBetaBot
 {
@@ -44,7 +46,8 @@ namespace AlphaBetaBot
 
         public static async Task CreateRaidEmbedAsync(RestUserMessage msg, Raid raid)
         {
-            var westernTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Pacific Standard Time");
+            var westernTimeZone = TZConvert.GetTimeZoneInfo("Pacific Standard Time");
+
             var localDateTime = TimeZoneInfo.ConvertTime(raid.RaidTime, westernTimeZone);
 
             var embed = new LocalEmbedBuilder()
