@@ -1,6 +1,7 @@
 ﻿using System;
 using NodaTime;
 using NodaTime.Text;
+using NodaTime.TimeZones;
 
 namespace AlphaBetaBot
 {
@@ -8,7 +9,7 @@ namespace AlphaBetaBot
     {
         public static readonly string[] Formats = new [] { "M/d htt", "M/d h tt", "M/d/yyyy htt", "M/d/yyyy h tt" };
 
-        private DateTimeOffset _dto;
+        private readonly DateTimeOffset _dto;
         private OffsetDateTime _odt;
 
         public RaidTime(OffsetDateTime dateTime)
@@ -30,7 +31,8 @@ namespace AlphaBetaBot
                     continue;
 
                 var localDt = new LocalDateTime(DateTimeOffset.Now.Year, parse.Value.Month, parse.Value.Day, parse.Value.Hour, parse.Value.Minute);
-                var offsetDt = new OffsetDateTime(localDt, Offset.FromHours(-8));
+
+                var offsetDt = new OffsetDateTime(localDt, Offset.FromHours(-7));
                 return new RaidTime(offsetDt);
             }
 

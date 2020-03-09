@@ -14,6 +14,8 @@ namespace AlphaBetaBot.Data
         public RaidLocation RaidLocation { get; set; }
 
         public ICollection<RaidParticipant> Participants { get; set; }
+
+        public override string ToString() => $"{RaidLocationId} | {RaidTime}";
     }
 
     public class RaidConfiguration : EntityConfiguration<Raid>
