@@ -22,7 +22,7 @@ namespace AlphaBetaBot
 
             var signupChannel = Context.Guild.GetTextChannel(channelId);
 
-            var signupMessage = await signupChannel.SendMessageAsync($"Signups for {raidLocation.Humanize().Transform(To.TitleCase)} at {raidTime} have started. Click the reaction with your class icon to sign up!");
+            var signupMessage = await signupChannel.SendMessageAsync($"@everyone Signups for {raidLocation.Humanize().Transform(To.TitleCase)} at {raidTime} have started. Click the reaction with your class icon to sign up!");
 
             var tasks = AbfConfiguration.ClassEmojis.Values.Select(async ce => await signupMessage.AddReactionAsync(ce));
 
@@ -48,7 +48,7 @@ namespace AlphaBetaBot
             var localDateTime = TimeZoneInfo.ConvertTime(raid.RaidTime, westernTimeZone);
 
             var embed = new LocalEmbedBuilder()
-                .WithTitle($"{raid.RaidLocationId.Humanize().Transform(To.TitleCase)} - {localDateTime.ToString("MM/dd @ hh tt")}");
+                .WithTitle($"{raid.RaidLocationId.Humanize().Transform(To.TitleCase)} - {localDateTime:MM/dd @ hh tt}");
 
             var lines = raid.Participants.OrderBy(p => p.SignedUpAt).Select(p => $"{AbfConfiguration.ClassEmojis[p.Character.Class]} | {p.Character.CharacterName} | {p.Character.Role.Humanize()[0]}");
             var roleCounts = Enum.GetNames(typeof(ClassRole)).Select(r => (Role: Enum.Parse<ClassRole>(r), Count: raid.Participants.Count(rp => rp.Character.Role == Enum.Parse<ClassRole>(r))));
