@@ -11,8 +11,6 @@ using TimeZoneConverter;
 namespace AlphaBetaBot
 {
     [Name("Raids"), Group("raid", "raids")]
-    [RequireOwner(Group = "perm")]
-    [RequireUserPermissions(Permission.ManageGuild, Group = "perm")]
     public class WowRaidModule : AbfModuleBase
     {
         [Command("add", "create")]
