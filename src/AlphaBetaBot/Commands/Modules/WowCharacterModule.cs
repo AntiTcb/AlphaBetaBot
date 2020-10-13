@@ -36,6 +36,29 @@ namespace AlphaBetaBot
             await ReplyAsync(embed: embed.Build());
         }
 
+        [Command("list")]
+        public async Task ListCharactersAsync(IUser user)
+        {
+            var characters = DbContext.Database.Users.FirstOrDefault(u => u.Id == user.Id)?.Characters;
+
+            var embed = new LocalEmbedBuilder()
+                .WithTitle($"{user.Name}'s characters:");
+
+            if (characters is null || !characters.Any())
+            {
+                embed.WithDescription($"They have no characters.");
+                await ReplyAsync(embed: embed.Build());
+                return;
+            }
+
+            var sb = new StringBuilder();
+            foreach (var character in characters)
+                sb.AppendLine($"{character.CharacterName} | {character.Class} | {character.Role}");
+
+            embed.WithDescription(sb.ToString());
+            await ReplyAsync(embed: embed.Build());
+        }
+
         [Command("add")]
         [Description("Adds a character to the bot.")]
         [Remarks("!characters add Gnomeorpuns Ranged Mage")]
