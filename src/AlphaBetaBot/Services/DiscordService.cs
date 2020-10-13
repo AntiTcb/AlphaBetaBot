@@ -30,23 +30,79 @@ namespace AlphaBetaBot
             _configuration = configProvider.Configuration;
         }
 
-        public async Task SetupAsync(Assembly assembly)
+        public ValueTask SetupAsync(Assembly assembly)
         {
             Ready += OnReadyAsync;
             CommandExecutionFailed += HandleCommandExecutionFailedAsync;
-            Logger.MessageLogged += OnMessageLogged;
+            Logger.Logged += OnMessageLogged;
 
             ReactionAdded += HandleRaidSignupAsync;
+            ReactionAdded += HandleRaidTentativeAddedAsync;
             ReactionRemoved += HandleRaidResignAsync;
+            ReactionRemoved += HandleRaidTentativeRemovedAsync;
             
             AddModules(assembly);
 
             AddTypeParser(WowCharacterParser.Instance);
             AddTypeParser(RaidTimeParser.Instance);
             AddTypeParser(RaidLocationParser.Instance);
+
+            return new ValueTask();
         }
 
         private static string[] GetClassNames() => Enum.GetNames(typeof(WowClass));
+
+        private async Task HandleRaidTentativeRemovedAsync(ReactionRemovedEventArgs e)
+        {
+            if (e.Emoji.ToString() != "❓") return;
+
+            var dbContext = this.GetRequiredService<AbfDbContext>();
+
+            await using (dbContext)
+            {
+                var (_, raid, user, _) = await CheckForRaidAsync(e.Message.Id.RawValue, e.User.Id.RawValue, e.Emoji.Name, dbContext);
+
+                if (raid is null || user is null) return;
+
+                var userParticipants = raid.Participants.Where(rp => rp.Character.Owner.Id == e.User.Id.RawValue);
+
+                foreach (var participant in userParticipants)
+                {
+                    participant.IsTentative = false;
+                    dbContext.Update(participant);
+                }
+                await dbContext.SaveChangesAsync();
+
+                var msg = await e.Message.FetchAsync() as RestUserMessage;
+                await WowRaidModule.CreateRaidEmbedAsync(msg, raid);
+            }
+        }
+
+        private async Task HandleRaidTentativeAddedAsync(ReactionAddedEventArgs e)
+        {
+            if (e.Emoji.ToString() != "❓") return;
+
+            var dbContext = this.GetRequiredService<AbfDbContext>();
+
+            await using (dbContext)
+            {
+                var (_, raid, user, _) = await CheckForRaidAsync(e.Message.Id.RawValue, e.User.Id.RawValue, e.Emoji.Name, dbContext);
+
+                if (raid is null || user is null) return;
+
+                var userParticipants = raid.Participants.Where(rp => rp.Character.Owner.Id == e.User.Id.RawValue);
+
+                foreach (var participant in userParticipants)
+                {
+                    participant.IsTentative = true;
+                    dbContext.Update(participant);
+                }
+                await dbContext.SaveChangesAsync();
+
+                var msg = await e.Message.FetchAsync() as RestUserMessage;
+                await WowRaidModule.CreateRaidEmbedAsync(msg, raid);
+            }
+        }
 
         private async Task HandleRaidSignupAsync(ReactionAddedEventArgs e)
         {
@@ -235,7 +291,7 @@ namespace AlphaBetaBot
             return ctx.Channel.SendMessageAsync("", false, embed.Build());
         }
 
-        private void OnMessageLogged(object sender, MessageLoggedEventArgs e) => _logger.Log(e.Severity, e.Message, e.Exception);
+        private void OnMessageLogged(object sender, LogEventArgs e) => _logger.Log(e.Severity, e.Message, e.Exception);
 
         private Task OnReadyAsync(ReadyEventArgs e)
         {

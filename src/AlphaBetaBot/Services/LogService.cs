@@ -32,32 +32,32 @@ namespace AlphaBetaBot
                 _logger.Write(level, e, message);
         }
 
-        public void Log(LogMessageSeverity severity, string message, Exception e = null)
+        public void Log(LogSeverity severity, string message, Exception e = null)
         {
             switch (severity)
             {
-                case LogMessageSeverity.Critical:
+                case LogSeverity.Critical:
                     Fatal(message);
                     break;
-                case LogMessageSeverity.Debug:
+                case LogSeverity.Debug:
                     Debug(message);
                     break;
-                case LogMessageSeverity.Error:
+                case LogSeverity.Error:
                     if (e is null)
                         Error(message);
                     else
                         Error(message, e);
                     break;
-                case LogMessageSeverity.Warning:
+                case LogSeverity.Warning:
                     Warning(message);
                     break;
-                case LogMessageSeverity.Information:
+                case LogSeverity.Information:
                     Info(message);
                     break;
             };
         }
 
-        public void Log(MessageLoggedEventArgs eventArgs) => Log(eventArgs.Severity, eventArgs.ToString(), eventArgs.Exception);
+        public void Log(LogEventArgs eventArgs) => Log(eventArgs.Severity, eventArgs.ToString(), eventArgs.Exception);
 
         public void Trace(string message) => _logger.Verbose($"[{_loggerName}] {message}");
         public void Debug(string message) => _logger.Debug($"[{_loggerName}] {message}");
