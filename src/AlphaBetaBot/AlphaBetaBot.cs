@@ -46,7 +46,6 @@ namespace AlphaBetaBot
 
             var ds = _services.GetRequiredService<DiscordService>();
 
-
             await ds.SetupAsync(Assembly.GetEntryAssembly());
             await ds.AddExtensionAsync(_services.GetRequiredService<InteractivityExtension>());
 
@@ -57,11 +56,10 @@ namespace AlphaBetaBot
 
         private IServiceProvider BuildServiceProvider()
         {
-            return new ServiceCollection()
+            var collection = new ServiceCollection()
                 .Configure<AbfConfiguration>(x => _configuration.GetSection("Bot").Bind(x))
                 .AddSingleton<AbfConfigurationProvider>()
                 .Configure<DatabaseConfiguration>(x => _configuration.GetSection("Database").Bind(x))
-                .AddSingleton<IPrefixProvider>(new DefaultPrefixProvider().AddPrefix('!').AddMentionPrefix())
                 .AddSingleton<IDatabaseConfigurationProvider, DatabaseConfigurationProvider>()
                 .AddSingleton<ConnectionStringProvider>()
                 .AddDbContext<AbfDbContext>(ServiceLifetime.Transient)
@@ -75,8 +73,16 @@ namespace AlphaBetaBot
                     }
                 })
                 .AddSingleton<DiscordService>()
-                .AddSingleton<InteractivityExtension>()
-                .BuildServiceProvider();
+                .AddSingleton<InteractivityExtension>();
+
+#if DEBUG
+
+            collection.AddSingleton<IPrefixProvider>(new DefaultPrefixProvider().AddPrefix("!!!").AddMentionPrefix());
+#else
+            collection.AddSingleton<IPrefixProvider>(new DefaultPrefixProvider().AddPrefix('!').AddMentionPrefix());
+#endif
+
+            return collection.BuildServiceProvider();
         }
 
         private Task HandleDatabaseUpdated(DatabaseActionEventArgs arg)
