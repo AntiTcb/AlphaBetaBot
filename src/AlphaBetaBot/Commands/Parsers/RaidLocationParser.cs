@@ -14,34 +14,39 @@ namespace AlphaBetaBot
                 return new TypeParserResult<RaidLocationId>("Invalid context type.");
             }
 
-            var result = value switch
+            var result = value.ToLower() switch
             {
-                "BWL" => new TypeParserResult<RaidLocationId>(RaidLocationId.BlackwingLair),
-                "Blackwing Lair" => new TypeParserResult<RaidLocationId>(RaidLocationId.BlackwingLair),
-                "Blackwing" => new TypeParserResult<RaidLocationId>(RaidLocationId.BlackwingLair),
-                "Nefarian" => new TypeParserResult<RaidLocationId>(RaidLocationId.BlackwingLair),
+                "bwl" => new TypeParserResult<RaidLocationId>(RaidLocationId.BlackwingLair),
+                "blackwing lair" => new TypeParserResult<RaidLocationId>(RaidLocationId.BlackwingLair),
+                "blackwing" => new TypeParserResult<RaidLocationId>(RaidLocationId.BlackwingLair),
+                "nefarian" => new TypeParserResult<RaidLocationId>(RaidLocationId.BlackwingLair),
+                "nef" => new TypeParserResult<RaidLocationId>(RaidLocationId.BlackwingLair),
 
-                "Molten Core" => new TypeParserResult<RaidLocationId>(RaidLocationId.MoltenCore),
-                "MC" => new TypeParserResult<RaidLocationId>(RaidLocationId.MoltenCore),
+                "molten core" => new TypeParserResult<RaidLocationId>(RaidLocationId.MoltenCore),
+                "mc" => new TypeParserResult<RaidLocationId>(RaidLocationId.MoltenCore),
+                "rag" => new TypeParserResult<RaidLocationId>(RaidLocationId.MoltenCore),
 
-                "Naxxramas" => new TypeParserResult<RaidLocationId>(RaidLocationId.Naxxramas),
-                "Naxx" => new TypeParserResult<RaidLocationId>(RaidLocationId.Naxxramas),
+                "naxxramas" => new TypeParserResult<RaidLocationId>(RaidLocationId.Naxxramas),
+                "naxx" => new TypeParserResult<RaidLocationId>(RaidLocationId.Naxxramas),
+                "nax" => new TypeParserResult<RaidLocationId>(RaidLocationId.Naxxramas),
+                "kt" => new TypeParserResult<RaidLocationId>(RaidLocationId.Naxxramas),
 
-                "Onyxia's Lair" => new TypeParserResult<RaidLocationId>(RaidLocationId.Onyxia),
-                "Onyxia" => new TypeParserResult<RaidLocationId>(RaidLocationId.Onyxia),
-                "Ony" => new TypeParserResult<RaidLocationId>(RaidLocationId.Onyxia),
+                "onyxia's lair" => new TypeParserResult<RaidLocationId>(RaidLocationId.Onyxia),
+                "onyxia" => new TypeParserResult<RaidLocationId>(RaidLocationId.Onyxia),
+                "ony" => new TypeParserResult<RaidLocationId>(RaidLocationId.Onyxia),
 
-                "ZG" => new TypeParserResult<RaidLocationId>(RaidLocationId.ZulGurub),
-                "Zul Gurub" => new TypeParserResult<RaidLocationId>(RaidLocationId.ZulGurub),
-                "Zul'Gurub" => new TypeParserResult<RaidLocationId>(RaidLocationId.ZulGurub),
+                "zg" => new TypeParserResult<RaidLocationId>(RaidLocationId.ZulGurub),
+                "zulgurub" => new TypeParserResult<RaidLocationId>(RaidLocationId.ZulGurub),
+                "zul gurub" => new TypeParserResult<RaidLocationId>(RaidLocationId.ZulGurub),
+                "zul'gurub" => new TypeParserResult<RaidLocationId>(RaidLocationId.ZulGurub),
 
-                "Ruins" => new TypeParserResult<RaidLocationId>(RaidLocationId.AQ20),
-                "Ruins of Ahn'Qiraj" => new TypeParserResult<RaidLocationId>(RaidLocationId.AQ20),
-                "AQ20" => new TypeParserResult<RaidLocationId>(RaidLocationId.AQ20),
+                "ruins" => new TypeParserResult<RaidLocationId>(RaidLocationId.AQ20),
+                "ruins of Ahn'Qiraj" => new TypeParserResult<RaidLocationId>(RaidLocationId.AQ20),
+                "aq20" => new TypeParserResult<RaidLocationId>(RaidLocationId.AQ20),
 
-                "Temple" => new TypeParserResult<RaidLocationId>(RaidLocationId.AQ40),
-                "Temple of Ahn'Qiraj" => new TypeParserResult<RaidLocationId>(RaidLocationId.AQ40),
-                "AQ40" => new TypeParserResult<RaidLocationId>(RaidLocationId.AQ40),
+                "temple" => new TypeParserResult<RaidLocationId>(RaidLocationId.AQ40),
+                "temple of Ahn'Qiraj" => new TypeParserResult<RaidLocationId>(RaidLocationId.AQ40),
+                "aq40" => new TypeParserResult<RaidLocationId>(RaidLocationId.AQ40),
 
                 _ => new TypeParserResult<RaidLocationId>("Couldn't find matching raid.")
             };
