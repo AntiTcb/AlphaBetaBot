@@ -44,12 +44,18 @@ namespace AlphaBetaBot
 
         public static async Task CreateRaidEmbedAsync(RestUserMessage msg, Raid raid)
         {
+            var westernTimeZone = TZConvert.GetTimeZoneInfo("America/Los_Angeles");
+            var localDateTime = TimeZoneInfo.ConvertTime(raid.RaidTime, westernTimeZone);
+
+            if (DateTimeOffset.UtcNow.CompareTo(localDateTime) > 0)
+            {
+                await msg.ModifyAsync(m => { m.Content = "This raid has already occurred."; m.Embed = null; });
+                await msg.ClearReactionsAsync();
+                return;
+            }
+
             if (!msg.IsPinned)
                 await msg.PinAsync();
-
-            var westernTimeZone = TZConvert.GetTimeZoneInfo("America/Los_Angeles");
-
-            var localDateTime = TimeZoneInfo.ConvertTime(raid.RaidTime, westernTimeZone);
 
             var embed = new LocalEmbedBuilder()
                 .WithTitle($"{raid.RaidLocationId.Humanize().Transform(To.TitleCase)} - {localDateTime:MM/dd @ hh tt}");
