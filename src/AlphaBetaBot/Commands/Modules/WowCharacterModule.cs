@@ -103,7 +103,9 @@ namespace AlphaBetaBot
         public async Task RemoveCharacterAsync([Description("Character Name")] WowCharacter character)
         {                
             if (character is null)
+            {
                 await ReplyAsync("Character not found.");
+            }
             else {
                 DbContext.Database.Remove(character);
                 await ReplyAsync($"{character.CharacterName} was removed from your character list.");

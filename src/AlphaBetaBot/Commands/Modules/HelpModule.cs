@@ -19,10 +19,8 @@ namespace AlphaBetaBot
             _configuration = configuration.Configuration;
         }
 
-        private Func<Parameter, string> GetUsage(Command command)
-        {
-            return x => $"[{x.Name}{(x.DefaultValue != null ? $"={x.DefaultValue}" : "")}]";
-        }
+        private Func<Parameter, string> GetUsage(Command command) 
+            => x => $"[{x.Name}{(x.DefaultValue != null ? $"={x.DefaultValue}" : "")}]";
 
         [Command("Help"), Hidden]
         [Description("Shows the different commands and modules usages.")]
@@ -68,7 +66,7 @@ namespace AlphaBetaBot
             var matchingCommands = _commands.FindCommands(command);
             if (matchingCommands.Count == 0)
             {
-                var typoFix = command.Levenshtein(_commands);
+                string typoFix = command.Levenshtein(_commands);
                 if (!string.IsNullOrWhiteSpace(typoFix))
                 {
                     matchingCommands = _commands.FindCommands(typoFix);

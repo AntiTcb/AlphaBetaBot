@@ -49,7 +49,7 @@ namespace AlphaBetaBot
 
             if (DateTimeOffset.UtcNow.CompareTo(localDateTime) > 0)
             {
-                await msg.ModifyAsync(m => { m.Content = "This raid has already occurred."; m.Embed = null; });
+                await msg.ModifyAsync(m => m.Content = "This raid has already occurred.");
                 await msg.ClearReactionsAsync();
                 return;
             }
