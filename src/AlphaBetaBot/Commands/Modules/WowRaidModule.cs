@@ -44,6 +44,9 @@ namespace AlphaBetaBot
 
         public static async Task CreateRaidEmbedAsync(RestUserMessage msg, Raid raid)
         {
+            if (!msg.IsPinned)
+                await msg.PinAsync();
+
             var westernTimeZone = TZConvert.GetTimeZoneInfo("America/Los_Angeles");
 
             var localDateTime = TimeZoneInfo.ConvertTime(raid.RaidTime, westernTimeZone);
@@ -65,9 +68,6 @@ namespace AlphaBetaBot
             embed.WithFooter(string.Join(" - ", roleCounts.Select(rc => $"{rc.Role.Humanize()}: {rc.Count}")));
 
             embed.WithTimestamp(raid.RaidTime);
-
-            if (!msg.IsPinned)
-                await msg.PinAsync();
 
             await msg.ModifyAsync(m => m.Embed = embed.Build());
         }

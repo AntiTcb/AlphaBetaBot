@@ -37,7 +37,7 @@ namespace AlphaBetaBot
         }
 
         [Command("list")]
-        public async Task ListCharactersAsync(IUser user)
+        public async Task ListCharactersAsync(CachedUser user)
         {
             var characters = DbContext.Database.Users.FirstOrDefault(u => u.Id == user.Id)?.Characters;
 
