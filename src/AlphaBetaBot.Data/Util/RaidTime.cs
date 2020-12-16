@@ -32,10 +32,10 @@ namespace AlphaBetaBot
 
                 var localDt = new LocalDateTime(DateTimeOffset.Now.Year, parse.Value.Month, parse.Value.Day, parse.Value.Hour, parse.Value.Minute);
 
-                int offset = -7;
+                int offset = -6;
                 if (TimeZoneInfo.Local.IsDaylightSavingTime(localDt.ToDateTimeUnspecified()))
                 {
-                    offset = -6;
+                    offset = -7;
                 }
 
                 var offsetDt = new OffsetDateTime(localDt, Offset.FromHours(offset));
