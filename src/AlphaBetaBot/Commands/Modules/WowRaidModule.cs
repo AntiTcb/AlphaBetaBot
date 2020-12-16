@@ -66,6 +66,9 @@ namespace AlphaBetaBot
 
             embed.WithTimestamp(raid.RaidTime);
 
+            if (!msg.IsPinned)
+                await msg.PinAsync();
+
             await msg.ModifyAsync(m => m.Embed = embed.Build());
         }
     }
