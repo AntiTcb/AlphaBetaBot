@@ -29,7 +29,7 @@ namespace AlphaBetaBot.Data
                 _context.InvokeEvent(new DatabaseActionEventArgs
                 {
                     ActionType = ActionType.GetAll,
-                    Path = $"::/{_name}Repository/{ActionType.GetAll}"
+                    Path = $"{_name}Repository/{ActionType.GetAll}"
                 });
 
                 return entities.AsReadOnly();
@@ -39,7 +39,7 @@ namespace AlphaBetaBot.Data
                 _context.InvokeEvent(new DatabaseActionEventArgs
                 {
                     ActionType = ActionType.GetAll,
-                    Path = $"::/{_name}Repository/{ActionType.GetAll}",
+                    Path = $"{_name}Repository/{ActionType.GetAll}",
                     IsErrored = true,
                     Exception = ex
                 });
@@ -62,7 +62,7 @@ namespace AlphaBetaBot.Data
                 _context.InvokeEvent(new DatabaseActionEventArgs
                 {
                     ActionType = ActionType.Get,
-                    Path = $"::/{_name}Repository/{ActionType.Get}/{id}"
+                    Path = $"{_name}Repository/{ActionType.Get}/{id}"
                 });
 
                 return entity;
@@ -72,7 +72,7 @@ namespace AlphaBetaBot.Data
                 _context.InvokeEvent(new DatabaseActionEventArgs
                 {
                     ActionType = ActionType.Get,
-                    Path = $"::/{_name}Repository/{ActionType.Get}/{id}",
+                    Path = $"{_name}Repository/{ActionType.Get}/{id}",
                     IsErrored = true,
                     Exception = ex
                 });
@@ -90,7 +90,7 @@ namespace AlphaBetaBot.Data
                 _context.InvokeEvent(new DatabaseActionEventArgs
                 {
                     ActionType = ActionType.Add,
-                    Path = $"::/{_name}Repository/{ActionType.Add}/{entity.Id}"
+                    Path = $"{_name}Repository/{ActionType.Add}/{entity.Id}"
                 });
 
                 return data;
@@ -100,7 +100,7 @@ namespace AlphaBetaBot.Data
                 _context.InvokeEvent(new DatabaseActionEventArgs
                 {
                     ActionType = ActionType.Add,
-                    Path = $"::/{_name}Repository/{ActionType.Add}/{entity.Id}",
+                    Path = $"{_name}Repository/{ActionType.Add}/{entity.Id}",
                     IsErrored = true,
                     Exception = ex
                 });
@@ -118,7 +118,7 @@ namespace AlphaBetaBot.Data
                 _context.InvokeEvent(new DatabaseActionEventArgs
                 {
                     ActionType = ActionType.Delete,
-                    Path = $"::/{_name}Repository/{ActionType.Delete}/{entity.Id}"
+                    Path = $"{_name}Repository/{ActionType.Delete}/{entity.Id}"
                 });
             }
             catch (Exception ex)
@@ -126,7 +126,7 @@ namespace AlphaBetaBot.Data
                 _context.InvokeEvent(new DatabaseActionEventArgs
                 {
                     ActionType = ActionType.Delete,
-                    Path = $"::/{_name}Repository/{ActionType.Delete}/{entity.Id}",
+                    Path = $"{_name}Repository/{ActionType.Delete}/{entity.Id}",
                     IsErrored = true,
                     Exception = ex
                 });
@@ -144,7 +144,7 @@ namespace AlphaBetaBot.Data
                 _context.InvokeEvent(new DatabaseActionEventArgs
                 {
                     ActionType = ActionType.DeleteAll,
-                    Path = $"::/{_name}Repository/{ActionType.DeleteAll}"
+                    Path = $"{_name}Repository/{ActionType.DeleteAll}"
                 });
             }
             catch (Exception ex)
@@ -152,7 +152,7 @@ namespace AlphaBetaBot.Data
                 _context.InvokeEvent(new DatabaseActionEventArgs
                 {
                     ActionType = ActionType.DeleteAll,
-                    Path = $"::/{_name}Repository/{ActionType.DeleteAll}",
+                    Path = $"{_name}Repository/{ActionType.DeleteAll}",
                     IsErrored = true,
                     Exception = ex
                 });
@@ -168,7 +168,7 @@ namespace AlphaBetaBot.Data
                 _context.InvokeEvent(new DatabaseActionEventArgs
                 {
                     ActionType = ActionType.Update,
-                    Path = $"::/{_name}Repository/{ActionType.Update}/{entity.Id}"
+                    Path = $"{_name}Repository/{ActionType.Update}/{entity.Id}"
                 });
             }
             catch (Exception ex)
@@ -176,7 +176,7 @@ namespace AlphaBetaBot.Data
                 _context.InvokeEvent(new DatabaseActionEventArgs
                 {
                     ActionType = ActionType.Update,
-                    Path = $"::/{_name}Repository/{ActionType.Update}/{entity.Id}",
+                    Path = $"{_name}Repository/{ActionType.Update}/{entity.Id}",
                     IsErrored = true,
                     Exception = ex
                 });

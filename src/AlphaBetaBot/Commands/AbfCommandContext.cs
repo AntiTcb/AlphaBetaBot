@@ -35,7 +35,11 @@ namespace AlphaBetaBot
 
         public Task PrepareAsync() => _databaseContext.PrepareAsync();
 
-        public Task EndAsync() => _databaseContext.Database.SaveChangesAsync();
+        public async Task EndAsync()
+        {
+            int changes = await _databaseContext.Database.SaveChangesAsync();
+            LogService.GetLogger("Commands").Info($"Database EndAsync :: {Command?.Name ?? "Unknown Command"} Executed. {changes} Changes Applied.");
+        }
 
         public ValueTask DisposeAsync() => _databaseContext.Database.DisposeAsync();
     }

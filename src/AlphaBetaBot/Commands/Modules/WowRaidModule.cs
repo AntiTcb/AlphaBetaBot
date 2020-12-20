@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using AlphaBetaBot.Data;
 using Disqord;
@@ -23,11 +24,7 @@ namespace AlphaBetaBot
             var signupChannel = Context.Guild.GetTextChannel(channelId);
 
             var signupMessage = await signupChannel.SendMessageAsync($"@everyone Signups for {raidLocation.Humanize().Transform(To.TitleCase)} at {raidTime} have started. Click the reaction with your class icon to sign up!");
-
-            var tasks = AbfConfiguration.ClassEmojis.Values.Select(async ce => await signupMessage.AddReactionAsync(ce));
-            await Task.WhenAll(tasks);
-
-            await signupMessage.AddReactionAsync(new LocalEmoji("❓"));
+            await AddRaidEmojisAsync(signupMessage);
 
             var raid = new Raid
             {
@@ -37,9 +34,17 @@ namespace AlphaBetaBot
             };
 
             await DbContext.AddRaidAsync(raid);
-                
+
             if (signupChannel.Id != Context.Channel.Id)
                 await ReplyAsync($"Raid signups started!");
+        }
+
+        private static async Task AddRaidEmojisAsync(RestUserMessage signupMessage)
+        {
+            var tasks = AbfConfiguration.ClassEmojis.Values.Select(async ce => await signupMessage.AddReactionAsync(ce));
+            await Task.WhenAll(tasks);
+
+            await signupMessage.AddReactionAsync(new LocalEmoji("❓"));
         }
 
         public static async Task CreateRaidEmbedAsync(RestUserMessage msg, Raid raid)
@@ -47,12 +52,17 @@ namespace AlphaBetaBot
             var westernTimeZone = TZConvert.GetTimeZoneInfo("America/Los_Angeles");
             var localDateTime = TimeZoneInfo.ConvertTime(raid.RaidTime, westernTimeZone);
 
-            if (DateTimeOffset.UtcNow.CompareTo(localDateTime) > 0)
+            if (DateTimeOffset.UtcNow.CompareTo(raid.RaidTime) > 0)
             {
+                if (msg.IsPinned)
+                    await msg.UnpinAsync();
                 await msg.ModifyAsync(m => m.Content = "This raid has already occurred.");
                 await msg.ClearReactionsAsync();
                 return;
             }
+
+            if (msg.Reactions.Count == 0)
+                await AddRaidEmojisAsync(msg);
 
             if (!msg.IsPinned)
                 await msg.PinAsync();

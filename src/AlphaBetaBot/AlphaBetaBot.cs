@@ -77,7 +77,7 @@ namespace AlphaBetaBot
 
 #if DEBUG
 
-            collection.AddSingleton<IPrefixProvider>(new DefaultPrefixProvider().AddPrefix("!!!").AddMentionPrefix());
+            collection.AddSingleton<IPrefixProvider>(new DefaultPrefixProvider().AddPrefix("#").AddMentionPrefix());
 #else
             collection.AddSingleton<IPrefixProvider>(new DefaultPrefixProvider().AddPrefix('!').AddMentionPrefix());
 #endif
@@ -90,7 +90,7 @@ namespace AlphaBetaBot
             if (arg.IsErrored)
                 _dbLogger.Error(arg.Path, arg.Exception);
             else
-                _dbLogger.Debug(arg.Path);
+                _dbLogger.Info(arg.Path);
 
             return Task.CompletedTask;
         }
