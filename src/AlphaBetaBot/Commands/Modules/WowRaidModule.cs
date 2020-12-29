@@ -67,23 +67,36 @@ namespace AlphaBetaBot
             if (!msg.IsPinned)
                 await msg.PinAsync();
 
-            var embed = new LocalEmbedBuilder()
-                .WithTitle($"{raid.RaidLocationId.Humanize().Transform(To.TitleCase)} - {localDateTime:MM/dd @ hh tt}");
-
-            var lines = raid.Participants.OrderBy(p => p.SignedUpAt).Select(p => $"{AbfConfiguration.ClassEmojis[p.Character.Class]} | {p.Character.CharacterName} | {p.Character.Role.Humanize()[0]}{(p.IsTentative ? " -- Tentative" : "")}");
             var roleCounts = Enum.GetNames(typeof(ClassRole)).Select(r => (Role: Enum.Parse<ClassRole>(r), Count: raid.Participants.Count(rp => rp.Character.Role == Enum.Parse<ClassRole>(r))));
             var classCounts = Enum.GetNames(typeof(WowClass)).Select(c => (Class: Enum.Parse<WowClass>(c), Count: raid.Participants.Count(rp => rp.Character.Class == Enum.Parse<WowClass>(c))));
 
-            embed.WithDescription(string.Join('\n', lines));
+            var embed = new LocalEmbedBuilder()
+                .WithTitle($"{raid.RaidLocationId.Humanize().Transform(To.TitleCase)} - {localDateTime:MM/dd @ hh tt}")
+                .WithFooter(string.Join(" - ", roleCounts.Select(rc => $"{rc.Role.Humanize()}: {rc.Count}")))
+                .WithTimestamp(raid.RaidTime);
 
-            foreach (var (Class, Count) in classCounts)
-                embed.AddField(Class.ToString(), Count, true);
+            var raiderGroups = raid.Participants.ToArray().OrderBy(rp => rp.SignedUpAt)
+                .Select((rp, index) => (SignedUpNumber: index + 1, RaidParticipant: rp))
+                .GroupBy(signup => signup.RaidParticipant.Character.Class)
+                .Select(g => (Class: Enum.Parse<WowClass>(g.Key.ToString()), Raiders: g.OrderBy(r => r.SignedUpNumber)));
+
+            foreach (var (Class, Raiders) in raiderGroups)
+            {
+                var field = new LocalEmbedFieldBuilder 
+                { 
+                    Name = $"{AbfConfiguration.ClassEmojis[Class]} {Class.Humanize().Pluralize()} ({Raiders.Count()})", 
+                    IsInline = true 
+                };
+
+                var sb = new StringBuilder();
+                foreach (var (signupNumber, raider) in Raiders)
+                    sb.AppendLine($"{signupNumber}) {raider.Character.CharacterName} | {raider.Character.Role.Humanize()[0]}{(raider.IsTentative ? " -- Tentative" : "")}");
+
+                field.Value = sb.ToString();
+                embed.AddField(field);
+            }
 
             embed.AddField("Total", raid.Participants.Count(), true);
-
-            embed.WithFooter(string.Join(" - ", roleCounts.Select(rc => $"{rc.Role.Humanize()}: {rc.Count}")));
-
-            embed.WithTimestamp(raid.RaidTime);
 
             await msg.ModifyAsync(m => m.Embed = embed.Build());
         }
