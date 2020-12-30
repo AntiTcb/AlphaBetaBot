@@ -55,7 +55,11 @@ namespace AlphaBetaBot
         private async Task HandleRaidTentativeRemovedAsync(ReactionRemovedEventArgs e)
         {
             if (e.Emoji.ToString() != "❓") return;
-
+#if DEBUG
+            if (e.User.Id != 89613772372574208) return;
+#else
+            if (e.Channel.Id == 793661221861064715) return;
+#endif
             var dbContext = this.GetRequiredService<AbfDbContext>();
 
             await using (dbContext)
@@ -81,7 +85,11 @@ namespace AlphaBetaBot
         private async Task HandleRaidTentativeAddedAsync(ReactionAddedEventArgs e)
         {
             if (e.Emoji.ToString() != "❓") return;
-
+#if DEBUG
+            if (e.User.Id != 89613772372574208) return;
+#else
+            if (e.Channel.Id == 793661221861064715) return;
+#endif
             var dbContext = this.GetRequiredService<AbfDbContext>();
 
             await using (dbContext)
@@ -107,7 +115,11 @@ namespace AlphaBetaBot
         private async Task HandleRaidSignupAsync(ReactionAddedEventArgs e)
         {
             if (!GetClassNames().Contains(e.Emoji.Name)) return;
-
+#if DEBUG
+            if (e.User.Id != 89613772372574208) return;
+#else
+            if (e.Channel.Id == 793661221861064715) return;
+#endif
             var dbContext = this.GetRequiredService<AbfDbContext>();
 
             await using (dbContext)
@@ -133,7 +145,11 @@ namespace AlphaBetaBot
         private async Task HandleRaidResignAsync(ReactionRemovedEventArgs e)
         {
             if (!GetClassNames().Contains(e.Emoji.Name)) return;
-
+#if DEBUG
+            if (e.User.Id != 89613772372574208) return;
+#else
+            if (e.Channel.Id == 793661221861064715) return;
+#endif
             var dbContext = this.GetRequiredService<AbfDbContext>();
 
             await using (dbContext)
@@ -297,7 +313,7 @@ namespace AlphaBetaBot
         {
             _logger.Info("AlphaBetaBot is ready.");
 
-            return e.Client.SetPresenceAsync(UserStatus.Online, new LocalActivity("Classic WoW", ActivityType.Playing));
+            return e.Client.SetPresenceAsync(UserStatus.Online, new LocalActivity("World of Warcraft Classic", ActivityType.Playing));
         }
 
         private static async Task<(bool, Raid, User, WowCharacter)> CheckForRaidAsync(ulong messageId, ulong userId, string emoteName, AbfDbContext dbContext)

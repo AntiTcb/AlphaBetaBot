@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -78,19 +79,39 @@ namespace AlphaBetaBot
             var raiderGroups = raid.Participants.ToArray().OrderBy(rp => rp.SignedUpAt)
                 .Select((rp, index) => (SignedUpNumber: index + 1, RaidParticipant: rp))
                 .GroupBy(signup => signup.RaidParticipant.Character.Class)
-                .Select(g => (Class: Enum.Parse<WowClass>(g.Key.ToString()), Raiders: g.OrderBy(r => r.SignedUpNumber)));
+                .Select(g => (Class: Enum.Parse<WowClass>(g.Key.ToString()), Raiders: g.OrderBy(r => r.SignedUpNumber)))
+                .ToDictionary(k => k.Class, v => v.Raiders);
 
-            foreach (var (Class, Raiders) in raiderGroups)
+            var embedLayoutDict = new Dictionary<WowClass, IOrderedEnumerable<(int, RaidParticipant)>> {
+                { WowClass.Druid, null },
+                { WowClass.Hunter, null },
+                { WowClass.Mage, null },
+                { WowClass.Paladin, null },
+                { WowClass.Priest, null },
+                { WowClass.Rogue, null },
+                { WowClass.Warlock, null },
+                { WowClass.Warrior, null }
+            };
+
+            foreach (var (Class, _) in embedLayoutDict)
             {
-                var field = new LocalEmbedFieldBuilder 
-                { 
-                    Name = $"{AbfConfiguration.ClassEmojis[Class]} {Class.Humanize().Pluralize()} ({Raiders.Count()})", 
-                    IsInline = true 
+                bool hasRaiders = raiderGroups.TryGetValue(Class, out var Raiders);
+
+                var field = new LocalEmbedFieldBuilder
+                {
+                    Name = $"{AbfConfiguration.ClassEmojis[Class]} {Class.Humanize().Pluralize()} ({Raiders?.Count() ?? 0})",
+                    IsInline = true
                 };
+
+                if (!hasRaiders)
+                {
+                    embed.AddField(field);
+                    continue;
+                }
 
                 var sb = new StringBuilder();
                 foreach (var (signupNumber, raider) in Raiders)
-                    sb.AppendLine($"{signupNumber}) {raider.Character.CharacterName} | {raider.Character.Role.Humanize()[0]}{(raider.IsTentative ? " -- Tentative" : "")}");
+                    sb.AppendLine($"{signupNumber}) {raider.Character.CharacterName} | {raider.Character.Role.Humanize()[0]}{(raider.IsTentative ? $" | {new LocalEmoji("❓")}" : "")}");
 
                 field.Value = sb.ToString();
                 embed.AddField(field);

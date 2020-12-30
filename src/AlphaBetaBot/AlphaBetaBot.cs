@@ -76,7 +76,6 @@ namespace AlphaBetaBot
                 .AddSingleton<InteractivityExtension>();
 
 #if DEBUG
-
             collection.AddSingleton<IPrefixProvider>(new DefaultPrefixProvider().AddPrefix("#").AddMentionPrefix());
 #else
             collection.AddSingleton<IPrefixProvider>(new DefaultPrefixProvider().AddPrefix('!').AddMentionPrefix());
