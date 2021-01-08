@@ -31,6 +31,12 @@ namespace AlphaBetaBot
                     continue;
 
                 var localDt = new LocalDateTime(DateTimeOffset.Now.Year, parse.Value.Month, parse.Value.Day, parse.Value.Hour, parse.Value.Minute);
+                var nowLocalDt = new LocalDateTime(DateTimeOffset.Now.Year, DateTimeOffset.Now.Month, DateTimeOffset.Now.Day, DateTimeOffset.Now.Hour, DateTimeOffset.Now.Minute);
+
+                if (localDt.CompareTo(nowLocalDt) <= 0)
+                {
+                    localDt = localDt.PlusYears(1);
+                }
 
                 int offset = -8;
                 if (TimeZoneInfo.Local.IsDaylightSavingTime(localDt.ToDateTimeUnspecified()))
@@ -39,6 +45,7 @@ namespace AlphaBetaBot
                 }
 
                 var offsetDt = new OffsetDateTime(localDt, Offset.FromHours(offset));
+
                 return new RaidTime(offsetDt);
             }
 

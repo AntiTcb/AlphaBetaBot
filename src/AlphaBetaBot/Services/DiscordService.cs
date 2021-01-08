@@ -52,36 +52,6 @@ namespace AlphaBetaBot
 
         private static string[] GetClassNames() => Enum.GetNames(typeof(WowClass));
 
-        private async Task HandleRaidTentativeRemovedAsync(ReactionRemovedEventArgs e)
-        {
-            if (e.Emoji.ToString() != "❓") return;
-#if DEBUG
-            if (e.User.Id != 89613772372574208) return;
-#else
-            if (e.Channel.Id == 793661221861064715) return;
-#endif
-            var dbContext = this.GetRequiredService<AbfDbContext>();
-
-            await using (dbContext)
-            {
-                var (_, raid, user, _) = await CheckForRaidAsync(e.Message.Id.RawValue, e.User.Id.RawValue, e.Emoji.Name, dbContext);
-
-                if (raid is null || user is null) return;
-
-                var userParticipants = raid.Participants.Where(rp => rp.Character.Owner.Id == e.User.Id.RawValue);
-
-                foreach (var participant in userParticipants)
-                {
-                    participant.IsTentative = false;
-                    dbContext.Update(participant);
-                }
-                await dbContext.SaveChangesAsync();
-
-                var msg = await e.Message.FetchAsync() as RestUserMessage;
-                await WowRaidModule.CreateRaidEmbedAsync(msg, raid);
-            }
-        }
-
         private async Task HandleRaidTentativeAddedAsync(ReactionAddedEventArgs e)
         {
             if (e.Emoji.ToString() != "❓") return;
@@ -112,6 +82,36 @@ namespace AlphaBetaBot
             }
         }
 
+        private async Task HandleRaidTentativeRemovedAsync(ReactionRemovedEventArgs e)
+        {
+            if (e.Emoji.ToString() != "❓") return;
+#if DEBUG
+            if (e.User.Id != 89613772372574208) return;
+#else
+            if (e.Channel.Id == 793661221861064715) return;
+#endif
+            var dbContext = this.GetRequiredService<AbfDbContext>();
+
+            await using (dbContext)
+            {
+                var (_, raid, user, _) = await CheckForRaidAsync(e.Message.Id.RawValue, e.User.Id.RawValue, e.Emoji.Name, dbContext);
+
+                if (raid is null || user is null) return;
+
+                var userParticipants = raid.Participants.Where(rp => rp.Character.Owner.Id == e.User.Id.RawValue);
+
+                foreach (var participant in userParticipants)
+                {
+                    participant.IsTentative = false;
+                    dbContext.Update(participant);
+                }
+                await dbContext.SaveChangesAsync();
+
+                var msg = await e.Message.FetchAsync() as RestUserMessage;
+                await WowRaidModule.CreateRaidEmbedAsync(msg, raid);
+            }
+        }
+
         private async Task HandleRaidSignupAsync(ReactionAddedEventArgs e)
         {
             if (!GetClassNames().Contains(e.Emoji.Name)) return;
@@ -125,8 +125,16 @@ namespace AlphaBetaBot
             await using (dbContext)
             {
                 var (check, raid, user, character) = await CheckForRaidAsync(e.Message.Id.RawValue, e.User.Id.RawValue, e.Emoji.Name, dbContext);
-                if (!check) return;
 
+                if (!check)
+                {
+                    if (character is null)
+                    {
+                        var reactionUser = await e.User.FetchAsync();
+                        await e.Channel.SendMessageAsync($"{reactionUser.Mention}, I didn't find a {e.Emoji.Name} character for you. Please add a character with the `!character add` command. Check out the <#681270526601068594> channel for examples.");
+                    }
+                    return;
+                }
 
                 if (raid.Participants.Any(p => p.CharacterId == character.Id)) return;
 
