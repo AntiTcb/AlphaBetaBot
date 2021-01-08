@@ -128,7 +128,7 @@ namespace AlphaBetaBot
 
                 if (!check)
                 {
-                    if (character is null)
+                    if (character is null && e.User.Id != CurrentUser.Id)
                     {
                         var reactionUser = await e.User.FetchAsync();
                         await e.Channel.SendMessageAsync($"{reactionUser.Mention}, I didn't find a {e.Emoji.Name} character for you. Please add a character with the `!character add` command. Check out the <#681270526601068594> channel for examples.");
