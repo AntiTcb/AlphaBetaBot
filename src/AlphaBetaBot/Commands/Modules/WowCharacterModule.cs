@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -37,7 +38,7 @@ namespace AlphaBetaBot
             await ReplyAsync(embed: embed.Build());
         }
 
-        [Command("list")]
+        [Command("list"), Hidden]
         [Description("Lists off all the characters the mentioned person has registered with the bot.")]
         public async Task ListCharactersAsync(CachedMember user)
         {
@@ -62,7 +63,7 @@ namespace AlphaBetaBot
         }
 
         [Command("add"), RunMode(RunMode.Parallel)]
-        [Description("Adds a character to the bot.")]
+        [Description("Adds a character to the bot. This is an interactive version, where the bot will ask you questions you'll need to reply to.")]
         public async Task InteractiveAddCharacterAsync()
         {
             var interactivity = Context.Channel.Client.GetExtension<InteractivityExtension>();
@@ -70,13 +71,15 @@ namespace AlphaBetaBot
             var msg = await ReplyAsync("What is your character's name?");
             var characterNameReply = await interactivity.WaitForMessageAsync(e => e.Message.Channel.Id == Context.Channel.Id && e.Message.Author.Id == Context.User.Id, TimeSpan.FromSeconds(15));
 
-            if (characterNameReply is null) {
+            if (characterNameReply is null)
+            {
                 await msg.ModifyAsync(m => m.Content = "I don't have all day. Try the command again, and reply within 15 seconds!");
                 return;
             }
             string characterName = characterNameReply.Message.Content;
+            var messagesToDelete = new List<IMessage>() { Context.Message, characterNameReply.Message };
 
-            var msg2 = await ReplyAsync($"What class is {characterName}?");
+            var msg2 = await ReplyAsync($"What class is {characterName}? (Druid, Hunter, Mage, Paladin, Priest, Rogue, Warlock, Warrior)");
             var classReply = await interactivity.WaitForMessageAsync(e => e.Message.Channel.Id == Context.Channel.Id && e.Message.Author.Id == Context.User.Id, TimeSpan.FromSeconds(15));
 
             if (classReply is null)
@@ -85,29 +88,45 @@ namespace AlphaBetaBot
                 return;
             }
             var @class = Enum.Parse<WowClass>(classReply.Message.Content, true);
+            messagesToDelete.Add(msg2);
+            messagesToDelete.Add(classReply.Message);
 
-            var msg3 = await ReplyAsync($"What is role is {characterName}? (Melee, Ranged, Tank, or Healer)");
-            var roleReply = await interactivity.WaitForMessageAsync(e => e.Message.Channel.Id == Context.Channel.Id && e.Message.Author.Id == Context.User.Id, TimeSpan.FromSeconds(15));
-
-            if (roleReply is null)
+            ClassRole role;
+            if (@class == WowClass.Mage || @class == WowClass.Warlock || @class == WowClass.Hunter)
             {
-                await msg.ModifyAsync(m => m.Content = "I don't have all day. Try the command again, and reply within 15 seconds!");
-                return;
+                role = ClassRole.Ranged;
             }
-            var role = Enum.Parse<ClassRole>(roleReply.Message.Content, true);
+            else if (@class == WowClass.Rogue)
+            {
+                role = ClassRole.Melee;
+            }
+            else
+            {
+                var msg3 = await ReplyAsync($"What is role is {characterName}? (Melee, Ranged, Tank, or Healer)");
+                var roleReply = await interactivity.WaitForMessageAsync(e => e.Message.Channel.Id == Context.Channel.Id && e.Message.Author.Id == Context.User.Id, TimeSpan.FromSeconds(15));
 
+                if (roleReply is null)
+                {
+                    await msg.ModifyAsync(m => m.Content = "I don't have all day. Try the command again, and reply within 15 seconds!");
+                    return;
+                }
+
+                role = Enum.Parse<ClassRole>(roleReply.Message.Content, true);
+                messagesToDelete.Add(msg3);
+                messagesToDelete.Add(roleReply.Message);
+            }
 
             await AddCharacterAsync(characterName, @class, role);
             await DbContext.Database.SaveChangesAsync();
 
-            await (Context.Channel as CachedTextChannel).DeleteMessagesAsync(new IMessage[] { msg, msg2, msg3, characterNameReply.Message, classReply.Message, roleReply.Message, Context.Message }.Select(m => m.Id));
+            await (Context.Channel as CachedTextChannel).DeleteMessagesAsync(messagesToDelete.Select(m => m.Id));
 
             var finalMsg = await ReplyAsync($"You've successfully registered {characterName} to your characters list. You may now sign up for raids with {characterName} by clicking the {@class} icon on the raid signup message.");
 
             _ = Task.Run(async () => { await Task.Delay(TimeSpan.FromSeconds(15)); await finalMsg.DeleteAsync(); });
         }
 
-        [Command("add"), RunMode(RunMode.Parallel)]
+        [Command("add"), RunMode(RunMode.Parallel), Hidden]
         [Description("Adds a character to the bot, for the person mentioned.")]
         public async Task InteractiveAddCharacterAsync(CachedMember user)
         {
@@ -123,7 +142,9 @@ namespace AlphaBetaBot
             }
             string characterName = characterNameReply.Message.Content;
 
-            var msg2 = await ReplyAsync($"What class is {characterName}?");
+            var messagesToDelete = new List<IMessage>() { Context.Message, characterNameReply.Message };
+
+            var msg2 = await ReplyAsync($"What class is {characterName}? (Druid, Hunter, Mage, Paladin, Priest, Rogue, Warlock, Warrior)");
             var classReply = await interactivity.WaitForMessageAsync(e => e.Message.Channel.Id == Context.Channel.Id && e.Message.Author.Id == user.Id, TimeSpan.FromSeconds(15));
 
             if (classReply is null)
@@ -132,21 +153,38 @@ namespace AlphaBetaBot
                 return;
             }
             var @class = Enum.Parse<WowClass>(classReply.Message.Content, true);
+            messagesToDelete.Add(msg2);
+            messagesToDelete.Add(classReply.Message);
 
-            var msg3 = await ReplyAsync($"What is role is {characterName}? (Melee, Ranged, Tank, or Healer)");
-            var roleReply = await interactivity.WaitForMessageAsync(e => e.Message.Channel.Id == Context.Channel.Id && e.Message.Author.Id == user.Id, TimeSpan.FromSeconds(15));
-
-            if (roleReply is null)
+            ClassRole role;
+            if (@class == WowClass.Mage || @class == WowClass.Warlock || @class == WowClass.Hunter)
             {
-                await msg.ModifyAsync(m => m.Content = "I don't have all day. Try the command again, and reply within 15 seconds!");
-                return;
+                role = ClassRole.Ranged;
             }
-            var role = Enum.Parse<ClassRole>(roleReply.Message.Content, true);
+            else if (@class == WowClass.Rogue)
+            {
+                role = ClassRole.Melee;
+            }
+            else
+            {
+                var msg3 = await ReplyAsync($"What is role is {characterName}? (Melee, Ranged, Tank, or Healer)");
+                var roleReply = await interactivity.WaitForMessageAsync(e => e.Message.Channel.Id == Context.Channel.Id && e.Message.Author.Id == user.Id, TimeSpan.FromSeconds(15));
+
+                if (roleReply is null)
+                {
+                    await msg.ModifyAsync(m => m.Content = "I don't have all day. Try the command again, and reply within 15 seconds!");
+                    return;
+                }
+
+                role = Enum.Parse<ClassRole>(roleReply.Message.Content, true);
+                messagesToDelete.Add(msg3);
+                messagesToDelete.Add(roleReply.Message);
+            }
 
             await AddCharacterAsync(user, characterName, @class, role);
             await DbContext.Database.SaveChangesAsync();
 
-            await (Context.Channel as CachedTextChannel).DeleteMessagesAsync(new IMessage[] { msg, msg2, msg3, characterNameReply.Message, classReply.Message, roleReply.Message, Context.Message }.Select(m => m.Id));
+            await (Context.Channel as CachedTextChannel).DeleteMessagesAsync(messagesToDelete.Select(m => m.Id));
 
             var finalMsg = await ReplyAsync($"You've successfully registered {characterName} to your characters list. You may now sign up for raids with {characterName} by clicking the {@class} icon on the raid signup message.");
 
@@ -154,15 +192,15 @@ namespace AlphaBetaBot
         }
 
         [Command("add")]
-        [Description("Adds a character to the bot.")]
+        [Description("Adds a character to the bot. You can put the role and class in either order.")]
         [Remarks("!characters add Gnomeorpuns Ranged Mage")]
-        public Task AddCharacterAsync([Description("Character Name")] string characterName, [Description("Role: Tank|Healer|Melee|Ranged")] ClassRole role, [Description("Class: Druid|Hunter|Mage|Paladin|Priest|Warlock|Warrior")] WowClass @class)
+        public Task AddCharacterAsync([Description("Character Name")] string characterName, [Description("Role: Tank|Healer|Melee|Ranged")] ClassRole role, [Description("Class: Druid|Hunter|Mage|Paladin|Priest|Rogue|Warlock|Warrior")] WowClass @class)
             => AddCharacterAsync(characterName, @class, role);
 
-        [Command("add")]
+        [Command("add"), Hidden]
         [Description("Adds a character to the bot.")]
         [Remarks("!characters add Gnomeorpuns Mage Ranged")]
-        public async Task AddCharacterAsync([Description("Character Name")] string characterName, [Description("Class: Druid|Hunter|Mage|Paladin|Priest|Warlock|Warrior")] WowClass @class, [Description("Role: Tank|Healer|Melee|Ranged")] ClassRole role)
+        public async Task AddCharacterAsync([Description("Character Name")] string characterName, [Description("Class: Druid|Hunter|Mage|Paladin|Priest|Rogue|Warlock|Warrior")] WowClass @class, [Description("Role: Tank|Healer|Melee|Ranged")] ClassRole role)
         {
             if (DbContext.User.Characters.Any(c => c.Class == @class))
             {
@@ -171,7 +209,8 @@ namespace AlphaBetaBot
                 return;
             }
 
-            var character = new WowCharacter {
+            var character = new WowCharacter
+            {
                 CharacterName = characterName,
                 Class = @class,
                 Role = role,
@@ -182,13 +221,13 @@ namespace AlphaBetaBot
             await ConfirmAsync();
         }
 
-        [Command("add")]
+        [Command("add"), Hidden]
         [Description("Adds a character to the bot, for the person mentioned.")]
         [Remarks("!characters add @Gnomeorpuns Gnomeorpuns Mage Ranged")]
-        public async Task AddCharacterAsync([Description("Mention or username")] CachedMember user, [Description("Character Name")] string characterName, [Description("Class: Druid|Hunter|Mage|Paladin|Priest|Warlock|Warrior")] WowClass @class, [Description("Role: Tank|Healer|Melee|Ranged")] ClassRole role)
+        public async Task AddCharacterAsync([Description("Mention or username")] CachedMember user, [Description("Character Name")] string characterName, [Description("Class: Druid|Hunter|Mage|Paladin|Priest|Rogue|Warlock|Warrior")] WowClass @class, [Description("Role: Tank|Healer|Melee|Ranged")] ClassRole role)
         {
             var dbUser = await DbContext.Database.RequestRepository<UserRepository>().GetOrAddAsync(user.Id);
-         
+
             var character = new WowCharacter
             {
                 CharacterName = characterName,
@@ -203,10 +242,10 @@ namespace AlphaBetaBot
             await ConfirmAsync();
         }
 
-        [Command("add")]
+        [Command("add"), Hidden]
         [Description("Adds a character to the bot.")]
         [Remarks("!characters add @Gnomeorpuns Gnomeorpuns Mage Ranged")]
-        public Task AddCharacterAsync([Description("Mention or username")] CachedMember user, [Description("Character Name")] string characterName, [Description("Role: Tank|Healer|Melee|Ranged")] ClassRole role, [Description("Class: Druid|Hunter|Mage|Paladin|Priest|Warlock|Warrior")] WowClass @class)
+        public Task AddCharacterAsync([Description("Mention or username")] CachedMember user, [Description("Character Name")] string characterName, [Description("Role: Tank|Healer|Melee|Ranged")] ClassRole role, [Description("Class: Druid|Hunter|Mage|Paladin|Priest|Rogue|Warlock|Warrior")] WowClass @class)
             => AddCharacterAsync(user, characterName, @class, role);
 
         [Command("changerole")]
@@ -223,12 +262,13 @@ namespace AlphaBetaBot
         [Description("Removes the specified character from your character list.")]
         [Remarks("!characters remove Perishable")]
         public async Task RemoveCharacterAsync([Description("Character Name")] WowCharacter character)
-        {                
+        {
             if (character is null)
             {
                 await ReplyAsync("Character not found.");
             }
-            else {
+            else
+            {
                 DbContext.Database.Remove(character);
                 await ReplyAsync($"{character.CharacterName} was removed from your character list.");
             }

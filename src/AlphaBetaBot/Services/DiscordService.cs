@@ -115,6 +115,7 @@ namespace AlphaBetaBot
         private async Task HandleRaidSignupAsync(ReactionAddedEventArgs e)
         {
             if (!GetClassNames().Contains(e.Emoji.Name)) return;
+            if (e.User.Id == 668648526431125505 || e.User.Id == CurrentUser.Id) return;
 #if DEBUG
             if (e.User.Id != 89613772372574208) return;
 #else
@@ -128,10 +129,10 @@ namespace AlphaBetaBot
 
                 if (!check)
                 {
-                    if (character is null && e.User.Id != CurrentUser.Id)
+                    if (character is null)
                     {
                         var reactionUser = await e.User.FetchAsync();
-                        await e.Channel.SendMessageAsync($"{reactionUser.Mention}, I didn't find a {e.Emoji.Name} character for you. Please add a character with the `!character add` command. Check out the <#681270526601068594> channel for examples.");
+                        await e.Channel.SendMessageAsync($"{reactionUser.Mention}, I didn't find a {e.Emoji.Name} character for you. Please add a character with the `!character add` command. Do `!help character add` for full command information.");
                     }
                     return;
                 }

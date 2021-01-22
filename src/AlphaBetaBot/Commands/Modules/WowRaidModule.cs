@@ -25,6 +25,7 @@ namespace AlphaBetaBot
             var signupChannel = Context.Guild.GetTextChannel(channelId);
 
             var signupMessage = await signupChannel.SendMessageAsync($"@everyone Signups for {raidLocation.Humanize().Transform(To.TitleCase)} at {raidTime} have started. If you have your character registered with the bot, click the reaction with your class icon to sign up!");
+            await signupMessage.PinAsync();
             await AddRaidEmojisAsync(signupMessage);
 
             var raid = new Raid
@@ -116,7 +117,7 @@ namespace AlphaBetaBot
                 embed.AddField(field);
             }
 
-            embed.AddField($"Total ({raid.Participants.Count()})", string.Join("\n", roleCounts.Select(rc => $"{rc.Role.Humanize().Pluralize()} ({rc.Count})")), true);
+            embed.AddField($"Total ({raid.Participants.Count()})", string.Join("\n", new[] { string.Join("\n", roleCounts.Select(rc => $"{rc.Role.Humanize()} ({rc.Count})")), $"Tentative: {raid.Participants.Count(rp => rp.IsTentative)}" }), true);
 
             await msg.ModifyAsync(m => m.Embed = embed.Build());
         }

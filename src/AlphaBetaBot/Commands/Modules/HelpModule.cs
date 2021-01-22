@@ -146,7 +146,7 @@ namespace AlphaBetaBot
             };
 
             var builder = new StringBuilder();
-            foreach (var cmd in matchingCommands)
+            foreach (var cmd in matchingCommands.Where(c => c.Command.Attributes.All(a => !(a is HiddenAttribute))))
             {
                 builder.AppendLine($"**{cmd.Command.Description ?? "Undocumented."}**");
                 builder.AppendLine(($"`{Context.Prefix}{cmd.Command.Name} {string.Join(" ", cmd.Command.Parameters.Select(GetUsage(cmd.Command)))}`".ToLowerInvariant()).TrimEnd());
