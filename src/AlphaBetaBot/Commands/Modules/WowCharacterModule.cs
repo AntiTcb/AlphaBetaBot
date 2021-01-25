@@ -85,6 +85,7 @@ namespace AlphaBetaBot
             if (classReply is null)
             {
                 await msg.ModifyAsync(m => m.Content = "I don't have all day. Try the command again, and reply within 15 seconds!");
+                await (Context.Channel as CachedTextChannel).DeleteMessagesAsync(messagesToDelete.Select(m => m.Id));
                 return;
             }
             var @class = Enum.Parse<WowClass>(classReply.Message.Content, true);
@@ -108,6 +109,7 @@ namespace AlphaBetaBot
                 if (roleReply is null)
                 {
                     await msg.ModifyAsync(m => m.Content = "I don't have all day. Try the command again, and reply within 15 seconds!");
+                    await (Context.Channel as CachedTextChannel).DeleteMessagesAsync(messagesToDelete.Select(m => m.Id));
                     return;
                 }
 
