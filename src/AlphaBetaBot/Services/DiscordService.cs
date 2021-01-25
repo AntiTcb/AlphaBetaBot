@@ -123,6 +123,8 @@ namespace AlphaBetaBot
 #endif
             var dbContext = this.GetRequiredService<AbfDbContext>();
 
+            var msg = await e.Message.FetchAsync() as RestUserMessage;
+
             await using (dbContext)
             {
                 var (check, raid, user, character) = await CheckForRaidAsync(e.Message.Id.RawValue, e.User.Id.RawValue, e.Emoji.Name, dbContext);
@@ -132,9 +134,11 @@ namespace AlphaBetaBot
                     if (character is null)
                     {
                         var reactionUser = await e.User.FetchAsync();
-                        await e.Channel.SendMessageAsync($"{reactionUser.Mention}, I didn't find a {e.Emoji.Name} character for you. Please add a character with the `!character add` command. Do `!help character add` for full command information.");
+                        await e.Channel.SendMessageAsync($"{reactionUser.Mention}, I didn't find a {e.Emoji.Name} character for you. Please add a character with the `!character add` command. Example: `!character add Gnomeorpuns Mage Ranged`. Do `!help character add` for full command information.");
                     }
+                    await msg.RemoveMemberReactionAsync(e.User.Id, e.Emoji);
                     return;
+                    
                 }
 
                 if (raid.Participants.Any(p => p.CharacterId == character.Id)) return;
@@ -146,7 +150,6 @@ namespace AlphaBetaBot
 
                 await dbContext.SaveChangesAsync();
 
-                var msg = await e.Message.FetchAsync() as RestUserMessage;
                 await WowRaidModule.CreateRaidEmbedAsync(msg, raid);
             }
         }
