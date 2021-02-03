@@ -38,8 +38,10 @@ namespace AlphaBetaBot
 
             ReactionAdded += HandleRaidSignupAsync;
             ReactionAdded += HandleRaidTentativeAddedAsync;
+            ReactionAdded += HandleRaidAbsentAddedAsync;
             ReactionRemoved += HandleRaidResignAsync;
             ReactionRemoved += HandleRaidTentativeRemovedAsync;
+            ReactionRemoved += HandleRaidAbsentRemovedAsync;
             
             AddModules(assembly);
 
@@ -51,6 +53,66 @@ namespace AlphaBetaBot
         }
 
         private static string[] GetClassNames() => Enum.GetNames(typeof(WowClass));
+
+        private async Task HandleRaidAbsentAddedAsync(ReactionAddedEventArgs e)
+        {
+            if (e.Emoji.ToString() != "👋") return;
+#if DEBUG
+            if (e.User.Id != 89613772372574208) return;
+#else
+            if (e.Channel.Id == 793661221861064715) return;
+#endif
+            var dbContext = this.GetRequiredService<AbfDbContext>();
+
+            await using (dbContext)
+            {
+                var (_, raid, user, _) = await CheckForRaidAsync(e.Message.Id.RawValue, e.User.Id.RawValue, e.Emoji.Name, dbContext);
+
+                if (raid is null || user is null) return;
+
+                var userParticipants = raid.Participants.Where(rp => rp.Character.Owner.Id == e.User.Id.RawValue);
+
+                foreach (var participant in userParticipants)
+                {
+                    participant.IsAbsent = true;
+                    dbContext.Update(participant);
+                }
+                await dbContext.SaveChangesAsync();
+
+                var msg = await e.Message.FetchAsync() as RestUserMessage;
+                await WowRaidModule.CreateRaidEmbedAsync(msg, raid);
+            }
+        }
+
+        private async Task HandleRaidAbsentRemovedAsync(ReactionRemovedEventArgs e)
+        {
+            if (e.Emoji.ToString() != "👋") return;
+#if DEBUG
+            if (e.User.Id != 89613772372574208) return;
+#else
+            if (e.Channel.Id == 793661221861064715) return;
+#endif
+            var dbContext = this.GetRequiredService<AbfDbContext>();
+
+            await using (dbContext)
+            {
+                var (_, raid, user, _) = await CheckForRaidAsync(e.Message.Id.RawValue, e.User.Id.RawValue, e.Emoji.Name, dbContext);
+
+                if (raid is null || user is null) return;
+
+                var userParticipants = raid.Participants.Where(rp => rp.Character.Owner.Id == e.User.Id.RawValue);
+
+                foreach (var participant in userParticipants)
+                {
+                    participant.IsAbsent = false;
+                    dbContext.Update(participant);
+                }
+                await dbContext.SaveChangesAsync();
+
+                var msg = await e.Message.FetchAsync() as RestUserMessage;
+                await WowRaidModule.CreateRaidEmbedAsync(msg, raid);
+            }
+        }
 
         private async Task HandleRaidTentativeAddedAsync(ReactionAddedEventArgs e)
         {

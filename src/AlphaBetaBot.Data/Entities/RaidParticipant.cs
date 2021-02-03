@@ -16,6 +16,7 @@ namespace AlphaBetaBot.Data
         public Raid Raid { get; set; }
         public DateTimeOffset SignedUpAt { get; set; }
         public bool IsTentative { get; set; }
+        public bool IsAbsent { get; set; }
 
         public override string ToString() => $"{Character} | {RaidId} | {Raid.RaidLocationId}";
     }

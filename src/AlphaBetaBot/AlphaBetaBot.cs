@@ -21,7 +21,7 @@ namespace AlphaBetaBot
         private IServiceProvider _services;
         private LogService _dbLogger;
         
-        public async Task InitializeAsync(string configPath = DEFAULT_CONFIG_PATH)
+        public async Task InitializeAsync(CancellationToken cancelToken, string configPath = DEFAULT_CONFIG_PATH)
         {
             var config = new ConfigurationBuilder()
                 .AddJsonFile(configPath, false, true)
@@ -49,9 +49,8 @@ namespace AlphaBetaBot
             await ds.SetupAsync(Assembly.GetEntryAssembly());
             await ds.AddExtensionAsync(_services.GetRequiredService<InteractivityExtension>());
 
-            await ds.RunAsync();
-            await Task.Delay(Timeout.Infinite);
-
+            await ds.RunAsync(cancelToken);
+            //await Task.Delay(Timeout.Infinite);
         }
 
         private IServiceProvider BuildServiceProvider()

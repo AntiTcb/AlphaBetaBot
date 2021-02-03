@@ -43,10 +43,12 @@ namespace AlphaBetaBot
 
         private static async Task AddRaidEmojisAsync(RestUserMessage signupMessage)
         {
-            var tasks = AbfConfiguration.ClassEmojis.Values.Select(async ce => await signupMessage.AddReactionAsync(ce));
-            await Task.WhenAll(tasks);
 
-            await signupMessage.AddReactionAsync(new LocalEmoji("❓"));
+            foreach (var icon in AbfConfiguration.RaidEmbedIcons)
+            {
+                if (!signupMessage.Reactions.ContainsKey(icon))
+                    await signupMessage.AddReactionAsync(icon);
+            }
         }
 
         public static async Task CreateRaidEmbedAsync(RestUserMessage msg, Raid raid)
@@ -63,20 +65,19 @@ namespace AlphaBetaBot
                 return;
             }
 
-            if (msg.Reactions.Count == 0)
-                await AddRaidEmojisAsync(msg);
+            await AddRaidEmojisAsync(msg);
 
             if (!msg.IsPinned)
                 await msg.PinAsync();
 
-            var roleCounts = Enum.GetNames(typeof(ClassRole)).Select(r => (Role: Enum.Parse<ClassRole>(r), Count: raid.Participants.Count(rp => rp.Character.Role == Enum.Parse<ClassRole>(r))));
-            var classCounts = Enum.GetNames(typeof(WowClass)).Select(c => (Class: Enum.Parse<WowClass>(c), Count: raid.Participants.Count(rp => rp.Character.Class == Enum.Parse<WowClass>(c))));
+            var roleCounts = Enum.GetNames(typeof(ClassRole)).Select(r => (Role: Enum.Parse<ClassRole>(r), Count: raid.Participants.Where(rp => !rp.IsAbsent).Count(rp => rp.Character.Role == Enum.Parse<ClassRole>(r))));
+            var classCounts = Enum.GetNames(typeof(WowClass)).Select(c => (Class: Enum.Parse<WowClass>(c), Count: raid.Participants.Where(rp => !rp.IsAbsent).Count(rp => rp.Character.Class == Enum.Parse<WowClass>(c))));
 
             var embed = new LocalEmbedBuilder()
                 .WithTitle($"{raid.RaidLocationId.Humanize().Transform(To.TitleCase)} - {localDateTime:MM/dd @ hh tt}")
                 .WithTimestamp(raid.RaidTime);
 
-            var raiderGroups = raid.Participants.ToArray().OrderBy(rp => rp.SignedUpAt)
+            var raiderGroups = raid.Participants.Where(rp => !rp.IsAbsent).ToArray().OrderBy(rp => rp.SignedUpAt)
                 .Select((rp, index) => (SignedUpNumber: index + 1, RaidParticipant: rp))
                 .GroupBy(signup => signup.RaidParticipant.Character.Class)
                 .Select(g => (Class: Enum.Parse<WowClass>(g.Key.ToString()), Raiders: g.OrderBy(r => r.SignedUpNumber)))
@@ -117,7 +118,10 @@ namespace AlphaBetaBot
                 embed.AddField(field);
             }
 
-            embed.AddField($"Total ({raid.Participants.Count()})", string.Join("\n", new[] { string.Join("\n", roleCounts.Select(rc => $"{rc.Role.Humanize()} ({rc.Count})")), $"Tentative: {raid.Participants.Count(rp => rp.IsTentative)}" }), true);
+            embed.AddField($"Total ({raid.Participants.Where(rp => !rp.IsAbsent).Count()})", string.Join("\n", new[] { string.Join("\n", roleCounts.Select(rc => $"{rc.Role.Humanize()} ({rc.Count})")), $"Tentative: {raid.Participants.Count(rp => rp.IsTentative)}"}), true);
+
+            if (raid.Participants.Any(rp => rp.IsAbsent))
+                embed.AddField($"Absent ({raid.Participants.Count(rp => rp.IsAbsent)})", string.Join("\n", raid.Participants.Where(rp => rp.IsAbsent).Select(rp => rp.Character.CharacterName)));
 
             await msg.ModifyAsync(m => m.Embed = embed.Build());
         }

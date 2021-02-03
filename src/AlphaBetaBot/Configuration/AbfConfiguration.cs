@@ -19,5 +19,7 @@ namespace AlphaBetaBot
             { WowClass.Priest, new LocalCustomEmoji(671579050250338306, "Priest") },
             { WowClass.Paladin, new LocalCustomEmoji(671579050514579486, "Paladin") }
         };
-    }
+
+        public static List<IEmoji> RaidEmbedIcons { get; } = new List<IEmoji>(ClassEmojis.Values) { new LocalEmoji("❓"), new LocalEmoji("👋") };
+}
 }
